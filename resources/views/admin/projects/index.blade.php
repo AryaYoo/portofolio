@@ -2,68 +2,75 @@
 @section('title', 'Projects')
 
 @section('content')
-<div class="flex items-center justify-between mb-6">
-    <p class="text-gray-500 text-sm">Manage your portfolio projects</p>
-    <a href="{{ route('admin.projects.create') }}" class="inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-300">
-        <i class="fas fa-plus text-xs"></i>
-        <span>Add Project</span>
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-2xl font-black tracking-tight uppercase">Project Collections</h2>
+        <p class="text-[10px] text-gray-600 uppercase tracking-widest font-bold mt-1">Showcase your best work to the world</p>
+    </div>
+    <a href="{{ route('admin.projects.create') }}" class="admin-btn-primary inline-flex items-center gap-2 px-6 py-3 text-[10px] font-bold uppercase tracking-widest text-white shadow-lg">
+        <i class="fas fa-plus"></i>
+        <span>Add New Project</span>
     </a>
 </div>
 
 {{-- Projects Table --}}
-<div class="bg-white/[0.03] border border-white/10 rounded-2xl overflow-hidden">
+<div class="admin-card overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full">
             <thead>
-                <tr class="border-b border-white/5">
-                    <th class="text-left text-xs text-gray-500 font-medium uppercase tracking-wider px-6 py-4">#</th>
-                    <th class="text-left text-xs text-gray-500 font-medium uppercase tracking-wider px-6 py-4">Project</th>
-                    <th class="text-left text-xs text-gray-500 font-medium uppercase tracking-wider px-6 py-4">Category</th>
-                    <th class="text-left text-xs text-gray-500 font-medium uppercase tracking-wider px-6 py-4">Status</th>
-                    <th class="text-left text-xs text-gray-500 font-medium uppercase tracking-wider px-6 py-4">Order</th>
-                    <th class="text-right text-xs text-gray-500 font-medium uppercase tracking-wider px-6 py-4">Actions</th>
+                <tr class="border-b border-white/5 bg-white/[0.01]">
+                    <th class="text-left text-[10px] text-gray-500 font-black uppercase tracking-widest px-8 py-5">#</th>
+                    <th class="text-left text-[10px] text-gray-500 font-black uppercase tracking-widest px-8 py-5">Identity</th>
+                    <th class="text-left text-[10px] text-gray-500 font-black uppercase tracking-widest px-8 py-5">Category</th>
+                    <th class="text-left text-[10px] text-gray-500 font-black uppercase tracking-widest px-8 py-5">Visibility</th>
+                    <th class="text-left text-[10px] text-gray-500 font-black uppercase tracking-widest px-8 py-5">Priority</th>
+                    <th class="text-right text-[10px] text-gray-500 font-black uppercase tracking-widest px-8 py-5">Operations</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-white/5">
                 @forelse($projects as $project)
-                    <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-colors">
-                        <td class="px-6 py-4 text-sm text-gray-500">{{ $loop->iteration }}</td>
-                        <td class="px-6 py-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-lg overflow-hidden bg-purple-500/10 flex items-center justify-center flex-none">
+                    <tr class="hover:bg-white/[0.02] transition-colors group">
+                        <td class="px-8 py-5 text-[10px] font-black text-gray-700">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</td>
+                        <td class="px-8 py-5">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-white/5 border border-white/5 flex items-center justify-center flex-none group-hover:border-purple-500/30 transition-all overflow-hidden">
                                     @if($project->screenshot)
                                         <img src="{{ asset('storage/' . $project->screenshot) }}" alt="" class="w-full h-full object-cover">
                                     @else
-                                        <span class="text-lg">{{ $project->icon ?? '📁' }}</span>
+                                        <span class="text-lg opacity-40">{{ $project->icon ?? '📁' }}</span>
                                     @endif
                                 </div>
-                                <div>
-                                    <p class="text-sm font-medium">{{ $project->title }}</p>
-                                    <p class="text-xs text-gray-500 truncate max-w-[200px]">{{ $project->subtitle }}</p>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-bold text-gray-200 truncate">{{ $project->title }}</p>
+                                    <p class="text-[10px] text-gray-600 font-medium truncate uppercase tracking-tighter">{{ $project->subtitle }}</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-semibold uppercase tracking-wider {{ $project->category === 'best' ? 'bg-purple-500/20 text-purple-400' : 'bg-gray-500/20 text-gray-400' }}">
+                        <td class="px-8 py-5">
+                            <span class="px-2 py-1 text-[9px] font-black uppercase tracking-widest {{ $project->category === 'best' ? 'text-purple-500 bg-purple-500/10' : 'text-gray-500 bg-white/5' }}">
                                 {{ $project->category }}
                             </span>
                         </td>
-                        <td class="px-6 py-4">
-                            <span class="inline-flex items-center gap-1.5 text-xs {{ $project->is_active ? 'text-green-400' : 'text-gray-500' }}">
-                                <span class="w-1.5 h-1.5 rounded-full {{ $project->is_active ? 'bg-green-400' : 'bg-gray-600' }}"></span>
-                                {{ $project->is_active ? 'Active' : 'Inactive' }}
-                            </span>
+                        <td class="px-8 py-5">
+                            <div class="flex items-center gap-2">
+                                <div class="w-1 h-1 rounded-full {{ $project->is_active ? 'bg-green-500' : 'bg-gray-700' }}"></div>
+                                <span class="text-[10px] font-bold uppercase tracking-widest {{ $project->is_active ? 'text-green-500/80' : 'text-gray-700' }}">
+                                    {{ $project->is_active ? 'Public' : 'Draft' }}
+                                </span>
+                            </div>
                         </td>
-                        <td class="px-6 py-4 text-sm text-gray-400">{{ $project->sort_order }}</td>
-                        <td class="px-6 py-4 text-right">
-                            <div class="flex items-center justify-end gap-2">
-                                <a href="{{ route('admin.projects.edit', $project) }}" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:text-purple-400 hover:bg-purple-500/10 transition-all duration-200">
-                                    <i class="fas fa-pen text-xs"></i>
+                        <td class="px-8 py-5">
+                            <span class="text-[10px] font-bold text-gray-600">{{ $project->sort_order }}</span>
+                        </td>
+                        <td class="px-8 py-5 text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <a href="{{ route('admin.projects.edit', $project) }}" class="w-10 h-10 bg-white/5 flex items-center justify-center text-gray-500 hover:text-white hover:bg-purple-600 transition-all">
+                                    <i class="fas fa-pen-nib text-[10px]"></i>
                                 </a>
-                                <form action="{{ route('admin.projects.delete', $project) }}" method="POST" onsubmit="return confirm('Delete this project?')">
+                                <form action="{{ route('admin.projects.delete', $project) }}" method="POST" onsubmit="return confirm('Archive this project?')">
                                     @csrf @method('DELETE')
-                                    <button type="submit" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200">
-                                        <i class="fas fa-trash text-xs"></i>
+                                    <button type="submit" class="w-10 h-10 bg-white/5 flex items-center justify-center text-gray-500 hover:text-white hover:bg-red-600 transition-all">
+                                        <i class="fas fa-trash-alt text-[10px]"></i>
                                     </button>
                                 </form>
                             </div>
@@ -71,9 +78,11 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center text-gray-600">
-                            <i class="fas fa-folder-open text-3xl mb-3 block"></i>
-                            <p>No projects yet</p>
+                        <td colspan="6" class="px-8 py-20 text-center">
+                            <div class="opacity-20 mb-4">
+                                <i class="fas fa-box-open text-5xl"></i>
+                            </div>
+                            <p class="text-[10px] font-black uppercase tracking-widest text-gray-600">No Projects Found In Workspace</p>
                         </td>
                     </tr>
                 @endforelse

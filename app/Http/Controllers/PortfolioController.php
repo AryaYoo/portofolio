@@ -24,6 +24,11 @@ class PortfolioController extends Controller
         ));
     }
 
+    public function allProjects()
+    {
+        return view('projects-all');
+    }
+
     public function sendContact(Request $request)
     {
         $validated = $request->validate([

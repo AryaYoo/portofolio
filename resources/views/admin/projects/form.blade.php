@@ -2,102 +2,116 @@
 @section('title', $project->exists ? 'Edit Project' : 'New Project')
 
 @section('content')
-<div class="max-w-2xl">
-    <a href="{{ route('admin.projects') }}" class="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors mb-6">
-        <i class="fas fa-arrow-left text-xs"></i>
-        <span>Back to Projects</span>
+<div class="mb-10">
+    <a href="{{ route('admin.projects') }}" class="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600 hover:text-purple-500 transition-all mb-8">
+        <i class="fas fa-long-arrow-alt-left"></i>
+        <span>Return to Collections</span>
     </a>
+    <h2 class="text-2xl font-black tracking-tight uppercase">{{ $project->exists ? 'Edit Asset' : 'New Collection' }}</h2>
+    <p class="text-[10px] text-gray-600 uppercase tracking-widest font-bold mt-1">Configure project specifications and resources</p>
+</div>
 
-    <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-8">
+<div class="max-w-4xl">
+    <div class="admin-card p-10">
         <form action="{{ $project->exists ? route('admin.projects.update', $project) : route('admin.projects.store') }}"
-              method="POST" enctype="multipart/form-data" class="space-y-6">
+              method="POST" enctype="multipart/form-data" class="space-y-10">
             @csrf
             @if($project->exists) @method('PUT') @endif
 
-            <div class="grid sm:grid-cols-2 gap-5">
+            <div class="grid md:grid-cols-2 gap-8">
                 <div>
-                    <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2 font-medium">Title *</label>
-                    <input type="text" name="title" value="{{ old('title', $project->title) }}" required
-                           class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all duration-300 text-sm">
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Project Identifier</label>
+                    <input type="text" name="title" value="{{ old('title', $project->title) }}" required placeholder="e.g. Quantum Interface"
+                           class="admin-input w-full px-6 py-4 text-sm text-white placeholder-gray-800">
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2 font-medium">Category *</label>
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Classification</label>
                     <select name="category" required
-                            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all duration-300 text-sm">
-                        <option value="best" {{ old('category', $project->category) === 'best' ? 'selected' : '' }}>Best Project</option>
-                        <option value="other" {{ old('category', $project->category) === 'other' ? 'selected' : '' }}>Other Project</option>
+                            class="admin-input w-full px-6 py-4 text-sm text-white focus:bg-white/[0.07] appearance-none cursor-pointer">
+                        <option value="best" {{ old('category', $project->category) === 'best' ? 'selected' : '' }} class="bg-[#08080f]">Best Project (Highlight)</option>
+                        <option value="other" {{ old('category', $project->category) === 'other' ? 'selected' : '' }} class="bg-[#08080f]">Other Project (Archive)</option>
                     </select>
                 </div>
             </div>
 
             <div>
-                <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2 font-medium">Subtitle</label>
-                <input type="text" name="subtitle" value="{{ old('subtitle', $project->subtitle) }}"
-                       class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all duration-300 text-sm">
+                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Project Metadata (Subtitle)</label>
+                <input type="text" name="subtitle" value="{{ old('subtitle', $project->subtitle) }}" placeholder="e.g. Next.js / Tailwind / Framer"
+                       class="admin-input w-full px-6 py-4 text-sm text-white placeholder-gray-800">
             </div>
 
             <div>
-                <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2 font-medium">Description</label>
-                <textarea name="description" rows="4"
-                          class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all duration-300 text-sm resize-none">{{ old('description', $project->description) }}</textarea>
+                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Project Narrative</label>
+                <textarea name="description" rows="6" placeholder="Document the project scope and achievements..."
+                          class="admin-input w-full px-6 py-4 text-sm text-white placeholder-gray-800 resize-none leading-relaxed">{{ old('description', $project->description) }}</textarea>
             </div>
 
-            <div>
-                <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2 font-medium">Screenshot</label>
-                @if($project->screenshot)
-                    <div class="mb-3 relative inline-block">
-                        <img src="{{ asset('storage/' . $project->screenshot) }}" alt="" class="h-24 rounded-lg border border-white/10">
+            <div class="grid md:grid-cols-2 gap-10 pb-10 border-b border-white/5">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-4">Visual Screenshot</label>
+                    @if($project->screenshot)
+                        <div class="mb-6 relative group inline-block overflow-hidden">
+                            <img src="{{ asset('storage/' . $project->screenshot) }}" alt="" class="h-32 border border-white/10 opacity-80 group-hover:opacity-100 transition-all">
+                        </div>
+                    @endif
+                    <div class="relative">
+                        <input type="file" name="screenshot" accept="image/*" id="screenshot-input" class="hidden">
+                        <label for="screenshot-input" class="inline-flex items-center gap-3 bg-white/5 border border-white/10 hover:border-purple-500/50 px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-white cursor-pointer transition-all">
+                            <i class="fas fa-camera"></i>
+                            <span>Upload Capture</span>
+                        </label>
                     </div>
-                @endif
-                <input type="file" name="screenshot" accept="image/*"
-                       class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-gray-400 file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-purple-600 file:text-white file:text-xs file:font-medium text-sm">
-            </div>
-
-            <div class="grid sm:grid-cols-3 gap-5">
-                <div>
-                    <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2 font-medium">Icon (emoji)</label>
-                    <input type="text" name="icon" value="{{ old('icon', $project->icon) }}" placeholder="🚀"
-                           class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all duration-300 text-sm">
                 </div>
-                <div>
-                    <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2 font-medium">Icon Color</label>
-                    <input type="text" name="icon_color" value="{{ old('icon_color', $project->icon_color) }}" placeholder="#8b5cf6"
-                           class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all duration-300 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2 font-medium">Sort Order</label>
-                    <input type="number" name="sort_order" value="{{ old('sort_order', $project->sort_order ?? 0) }}"
-                           class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all duration-300 text-sm">
-                </div>
-            </div>
-
-            <div class="grid sm:grid-cols-2 gap-5">
-                <div>
-                    <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2 font-medium">Demo URL</label>
-                    <input type="url" name="demo_url" value="{{ old('demo_url', $project->demo_url) }}" placeholder="https://"
-                           class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all duration-300 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-500 uppercase tracking-wider mb-2 font-medium">Repo URL</label>
-                    <input type="url" name="repo_url" value="{{ old('repo_url', $project->repo_url) }}" placeholder="https://"
-                           class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all duration-300 text-sm">
+                <div class="space-y-8">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Symbol</label>
+                            <input type="text" name="icon" value="{{ old('icon', $project->icon) }}" placeholder="🚀"
+                                   class="admin-input w-full px-5 py-4 text-sm text-white placeholder-gray-800">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Priority</label>
+                            <input type="number" name="sort_order" value="{{ old('sort_order', $project->sort_order ?? 0) }}"
+                                   class="admin-input w-full px-5 py-4 text-sm text-white placeholder-gray-800">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Accent Color (HEX)</label>
+                        <input type="text" name="icon_color" value="{{ old('icon_color', $project->icon_color) }}" placeholder="#8b5cf6"
+                               class="admin-input w-full px-5 py-4 text-sm text-white placeholder-gray-800">
+                    </div>
                 </div>
             </div>
 
-            <div class="flex items-center gap-3">
-                <label class="flex items-center gap-2 cursor-pointer">
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Live Environment (Demo)</label>
+                    <input type="url" name="demo_url" value="{{ old('demo_url', $project->demo_url) }}" placeholder="https://demo.example.com"
+                           class="admin-input w-full px-6 py-4 text-sm text-white placeholder-gray-800">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Source Repository</label>
+                    <input type="url" name="repo_url" value="{{ old('repo_url', $project->repo_url) }}" placeholder="https://github.com/..."
+                           class="admin-input w-full px-6 py-4 text-sm text-white placeholder-gray-800">
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4 py-4">
+                <div class="relative inline-flex items-center cursor-pointer group">
                     <input type="hidden" name="is_active" value="0">
-                    <input type="checkbox" name="is_active" value="1" {{ old('is_active', $project->is_active ?? true) ? 'checked' : '' }}
-                           class="w-4 h-4 rounded bg-white/5 border-white/20 text-purple-600 focus:ring-purple-500/50">
-                    <span class="text-sm text-gray-400">Active</span>
-                </label>
+                    <input type="checkbox" name="is_active" value="1" id="is_active" {{ old('is_active', $project->is_active ?? true) ? 'checked' : '' }}
+                           class="peer hidden">
+                    <div class="w-5 h-5 border border-white/10 group-hover:border-purple-500/50 peer-checked:bg-purple-600 peer-checked:border-purple-600 transition-all"></div>
+                    <i class="fas fa-check absolute inset-0 text-[10px] text-white flex items-center justify-center scale-0 peer-checked:scale-100 transition-all"></i>
+                    <label for="is_active" class="ml-4 text-[10px] font-bold text-gray-600 uppercase tracking-widest cursor-pointer peer-checked:text-white transition-all">Public Accessibility</label>
+                </div>
             </div>
 
-            <div class="flex items-center gap-3 pt-4 border-t border-white/5">
-                <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white px-8 py-3 rounded-xl font-medium transition-all duration-300 text-sm">
-                    {{ $project->exists ? 'Update Project' : 'Create Project' }}
+            <div class="flex items-center gap-6 pt-10 border-t border-white/5">
+                <button type="submit" class="admin-btn-primary px-12 py-5 text-[10px] font-black uppercase tracking-[0.2em]">
+                    {{ $project->exists ? 'Synchronize Record' : 'Initialize Asset' }}
                 </button>
-                <a href="{{ route('admin.projects') }}" class="text-gray-400 hover:text-white px-4 py-3 text-sm transition-colors">Cancel</a>
+                <a href="{{ route('admin.projects') }}" class="text-[10px] font-black uppercase tracking-widest text-gray-600 hover:text-white transition-all">Abort Action</a>
             </div>
         </form>
     </div>

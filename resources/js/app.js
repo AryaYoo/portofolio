@@ -1,117 +1,124 @@
 import './bootstrap';
 
-// ═══════════════════════════════════════════════════════════
-// PORTFOLIO INTERACTIONS
-// ═══════════════════════════════════════════════════════════
-
 document.addEventListener('DOMContentLoaded', () => {
-    // ─── Navigation Dots Active State ──────────────────────
-    const sections = document.querySelectorAll('section[id]');
-    const navDots = document.querySelectorAll('.nav-dot');
-
-    if (sections.length && navDots.length) {
-        const observerOptions = {
-            root: null,
-            rootMargin: '-30% 0px -30% 0px',
-            threshold: 0,
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    navDots.forEach(dot => dot.classList.remove('active'));
-                    const activeDot = document.querySelector(`.nav-dot[data-section="${entry.target.id}"]`);
-                    if (activeDot) activeDot.classList.add('active');
+    // ─── Right Portal Scrolling & Mini Map ───────────────────
+    const portalScroll = document.getElementById('portal-scroll');
+    const sections = document.querySelectorAll('.portal-section');
+    const dots = document.querySelectorAll('.map-dot');
+    
+    if (portalScroll && sections.length && dots.length) {
+        
+        // 1. Sync dots when scrolling
+        portalScroll.addEventListener('scroll', () => {
+            let currentSectionIndex = 0;
+            const scrollPos = portalScroll.scrollTop;
+            
+            // Find which section is currently mostly in view
+            sections.forEach((section, index) => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                if (scrollPos >= sectionTop - (sectionHeight / 2)) {
+                    currentSectionIndex = index;
                 }
             });
-        }, observerOptions);
 
-        sections.forEach(section => observer.observe(section));
+            // Update active dot
+            dots.forEach(dot => dot.classList.remove('active'));
+            if (dots[currentSectionIndex]) {
+                dots[currentSectionIndex].classList.add('active');
+            }
+
+            // Animate skills if Section 2 (Skills) is active
+            if (currentSectionIndex === 2) {
+                animateSkillBars();
+            }
+        });
+
+        // 2. Click dot to scroll to section
+        dots.forEach((dot) => {
+            dot.addEventListener('click', () => {
+                const targetIndex = parseInt(dot.getAttribute('data-target'));
+                const targetSection = document.getElementById(`section-${targetIndex}`);
+                
+                if (targetSection) {
+                    portalScroll.scrollTo({
+                        top: targetSection.offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // 3. Optional: Keyboard Up/Down navigation
+        // To use keyboard effectively, we listen for keys and scroll manually 
+        // to snap to the exact next/prev section.
+        document.addEventListener('keydown', (e) => {
+            // Ignore if typing in an input
+            if (e.target.tagName.toLowerCase() === 'input' || e.target.tagName.toLowerCase() === 'textarea') {
+                return;
+            }
+
+            let currentIndex = 0;
+            const scrollPos = portalScroll.scrollTop;
+            sections.forEach((section, index) => {
+                if (scrollPos >= section.offsetTop - 50) {
+                    currentIndex = index;
+                }
+            });
+
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                const nextIndex = Math.min(currentIndex + 1, sections.length - 1);
+                portalScroll.scrollTo({
+                    top: document.getElementById(`section-${nextIndex}`).offsetTop,
+                    behavior: 'smooth'
+                });
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                const prevIndex = Math.max(currentIndex - 1, 0);
+                portalScroll.scrollTo({
+                    top: document.getElementById(`section-${prevIndex}`).offsetTop,
+                    behavior: 'smooth'
+                });
+            }
+        });
     }
 
-    // ─── Project Carousel ─────────────────────────────────
-    const carousel = document.getElementById('project-carousel');
+    // ─── Highlight Carousel Logic ────────────────────────────
+    const carousel = document.getElementById('highlight-carousel');
     const nextBtn = document.getElementById('carousel-next');
 
     if (carousel && nextBtn) {
-        let scrollPos = 0;
-        const cardWidth = 280;
-
         nextBtn.addEventListener('click', () => {
-            scrollPos += cardWidth;
-            if (scrollPos >= carousel.scrollWidth - carousel.clientWidth) {
-                scrollPos = 0;
-            }
-            carousel.scrollTo({ left: scrollPos, behavior: 'smooth' });
-        });
-    }
-
-    // ─── Skill Bars Animation ─────────────────────────────
-    const skillBars = document.querySelectorAll('.skill-bar');
-
-    if (skillBars.length) {
-        const skillObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const bar = entry.target;
-                    const level = bar.getAttribute('data-level');
-                    setTimeout(() => {
-                        bar.style.width = level + '%';
-                    }, 200);
-                    skillObserver.unobserve(bar);
-                }
-            });
-        }, { threshold: 0.3 });
-
-        skillBars.forEach(bar => skillObserver.observe(bar));
-    }
-
-    // ─── Fade In Up on Scroll ─────────────────────────────
-    const fadeElements = document.querySelectorAll(
-        '.project-card, .skill-item, #experience .group, #contact form'
-    );
-
-    if (fadeElements.length) {
-        const fadeObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }, index * 100);
-                    fadeObserver.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
-
-        fadeElements.forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-            fadeObserver.observe(el);
-        });
-    }
-
-    // ─── Smooth Scroll for Anchor Links ───────────────────
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', (e) => {
-            e.preventDefault();
-            const target = document.querySelector(anchor.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            const scrollWidth = carousel.scrollWidth;
+            const clientWidth = carousel.clientWidth;
+            const maxScroll = scrollWidth - clientWidth;
+            
+            let nextScrollPos = carousel.scrollLeft + 300; // rough width of one card + gap
+            
+            if (carousel.scrollLeft >= maxScroll - 10) { 
+                // Return to start if at the end
+                carousel.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                carousel.scrollTo({ left: nextScrollPos, behavior: 'smooth' });
             }
         });
-    });
+    }
 
-    // ─── Admin Sidebar Toggle ─────────────────────────────
-    const sidebarToggle = document.getElementById('sidebar-toggle');
-    const sidebar = document.getElementById('admin-sidebar');
-    const overlay = document.getElementById('sidebar-overlay');
-
-    if (sidebarToggle && sidebar) {
-        sidebarToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('-translate-x-full');
-            if (overlay) overlay.classList.toggle('hidden');
+    // ─── Skill Bars Animation ────────────────────────────────
+    let skillsAnimated = false;
+    function animateSkillBars() {
+        if (skillsAnimated) return;
+        
+        const skillFills = document.querySelectorAll('.skill-fill');
+        skillFills.forEach(fill => {
+            const level = fill.getAttribute('data-level');
+            // Slight delay to allow CSS transitions to trigger visually
+            setTimeout(() => {
+                fill.style.width = level + '%';
+            }, 100);
         });
+        
+        skillsAnimated = true;
     }
 });

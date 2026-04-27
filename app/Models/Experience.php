@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Experience extends Model
 {
     protected $fillable = [
-        'title', 'company', 'location', 'period', 'description', 'sort_order', 'is_active',
+        'title', 'company', 'logo', 'location', 'period', 'description', 'sort_order', 'is_active',
     ];
 
     protected $casts = [

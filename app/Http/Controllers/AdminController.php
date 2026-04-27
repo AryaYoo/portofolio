@@ -45,17 +45,25 @@ class AdminController extends Controller
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|string|max:50',
             'location' => 'nullable|string|max:255',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'social_links' => 'nullable|array',
         ]);
 
         $profile = Profile::first();
 
         if ($request->hasFile('photo')) {
+            $request->validate(['photo' => 'image|mimes:jpg,jpeg,png,webp|max:2048']);
             if ($profile->photo) {
                 Storage::disk('public')->delete($profile->photo);
             }
             $validated['photo'] = $request->file('photo')->store('profile', 'public');
+        }
+
+        if ($request->hasFile('wallpaper')) {
+            $request->validate(['wallpaper' => 'image|mimes:jpg,jpeg,png,webp|max:5120']);
+            if ($profile->wallpaper) {
+                Storage::disk('public')->delete($profile->wallpaper);
+            }
+            $validated['wallpaper'] = $request->file('wallpaper')->store('profile', 'public');
         }
 
         $profile->update($validated);
@@ -191,11 +199,16 @@ class AdminController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'company' => 'required|string|max:255',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'location' => 'nullable|string|max:255',
             'period' => 'required|string|max:100',
             'description' => 'nullable|string',
             'sort_order' => 'nullable|integer',
         ]);
+
+        if ($request->hasFile('logo')) {
+            $validated['logo'] = $request->file('logo')->store('experience', 'public');
+        }
 
         Experience::create($validated);
 
@@ -207,11 +220,19 @@ class AdminController extends Controller
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'company' => 'required|string|max:255',
+            'logo' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'location' => 'nullable|string|max:255',
             'period' => 'required|string|max:100',
             'description' => 'nullable|string',
             'sort_order' => 'nullable|integer',
         ]);
+
+        if ($request->hasFile('logo')) {
+            if ($experience->logo) {
+                Storage::disk('public')->delete($experience->logo);
+            }
+            $validated['logo'] = $request->file('logo')->store('experience', 'public');
+        }
 
         $experience->update($validated);
 

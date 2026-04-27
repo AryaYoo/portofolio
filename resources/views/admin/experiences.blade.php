@@ -2,81 +2,110 @@
 @section('title', 'Experience')
 
 @section('content')
-<p class="text-gray-500 text-sm mb-6">Manage your professional experience and education</p>
+<div class="mb-8">
+    <h2 class="text-2xl font-black tracking-tight uppercase">Professional History</h2>
+    <p class="text-[10px] text-gray-600 uppercase tracking-widest font-bold mt-1">Chronological record of your career and education</p>
+</div>
 
-<div class="grid lg:grid-cols-3 gap-6">
+<div class="grid lg:grid-cols-12 gap-10">
     {{-- Add Experience Form --}}
-    <div class="lg:col-span-1">
-        <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-6 sticky top-24">
-            <h3 class="text-sm font-semibold text-gray-300 mb-4">Add New Experience</h3>
-            <form action="{{ route('admin.experiences.store') }}" method="POST" class="space-y-4">
+    <div class="lg:col-span-4">
+        <div class="admin-card p-10 sticky top-28">
+            <h3 class="text-xs font-black text-gray-300 uppercase tracking-widest mb-8">Register Experience</h3>
+            <form action="{{ route('admin.experiences.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
                 @csrf
                 <div>
-                    <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5 font-medium">Title *</label>
-                    <input type="text" name="title" required placeholder="e.g. UI/UX Designer"
-                           class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all duration-300 text-sm">
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Position Title</label>
+                    <input type="text" name="title" required placeholder="e.g. Lead Developer"
+                           class="admin-input w-full px-6 py-4 text-sm text-white placeholder-gray-800">
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5 font-medium">Company *</label>
-                    <input type="text" name="company" required placeholder="e.g. Company Name"
-                           class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all duration-300 text-sm">
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Organization</label>
+                    <input type="text" name="company" required placeholder="e.g. Google Corp"
+                           class="admin-input w-full px-6 py-4 text-sm text-white placeholder-gray-800">
+                </div>
+                
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Organization Logo</label>
+                    <div class="relative">
+                        <input type="file" name="logo" accept="image/*" id="logo-input" class="hidden">
+                        <label for="logo-input" class="inline-flex w-full items-center justify-center gap-3 bg-white/5 border border-white/10 hover:border-purple-500/50 px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-white cursor-pointer transition-all">
+                            <i class="fas fa-camera"></i>
+                            <span>Select Logo Asset</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Location</label>
+                        <input type="text" name="location" placeholder="e.g. Remote"
+                               class="admin-input w-full px-5 py-4 text-sm text-white placeholder-gray-800">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Priority</label>
+                        <input type="number" name="sort_order" value="0"
+                               class="admin-input w-full px-5 py-4 text-sm text-white placeholder-gray-800">
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5 font-medium">Location</label>
-                    <input type="text" name="location" placeholder="e.g. Indonesia"
-                           class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all duration-300 text-sm">
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Time Period</label>
+                    <input type="text" name="period" required placeholder="e.g. 2024 - Present"
+                           class="admin-input w-full px-6 py-4 text-sm text-white placeholder-gray-800">
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5 font-medium">Period *</label>
-                    <input type="text" name="period" required placeholder="e.g. 2023 - Present"
-                           class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all duration-300 text-sm">
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Key Responsibilities</label>
+                    <textarea name="description" rows="5" placeholder="Summary of achievements..."
+                              class="admin-input w-full px-6 py-4 text-sm text-white placeholder-gray-800 resize-none leading-relaxed"></textarea>
                 </div>
-                <div>
-                    <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5 font-medium">Description</label>
-                    <textarea name="description" rows="3" placeholder="Brief description..."
-                              class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all duration-300 text-sm resize-none"></textarea>
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-500 uppercase tracking-wider mb-1.5 font-medium">Sort Order</label>
-                    <input type="number" name="sort_order" value="0"
-                           class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-gray-600 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 outline-none transition-all duration-300 text-sm">
-                </div>
-                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white py-2.5 rounded-xl font-medium transition-all duration-300 text-sm">
-                    Add Experience
+                <button type="submit" class="admin-btn-primary w-full py-5 text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                    Synchronize Master History
                 </button>
             </form>
         </div>
     </div>
 
     {{-- Experience List --}}
-    <div class="lg:col-span-2 space-y-4">
+    <div class="lg:col-span-8 space-y-6">
         @forelse($experiences as $exp)
-            <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-6 hover:border-white/20 transition-all duration-300 group">
-                <div class="flex items-start justify-between">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-3 mb-2">
-                            <span class="text-xs bg-purple-500/20 text-purple-400 px-2.5 py-1 rounded-lg font-medium">{{ $exp->period }}</span>
-                        </div>
-                        <h3 class="text-lg font-semibold">{{ $exp->title }}</h3>
-                        <p class="text-gray-400 text-sm mt-0.5">{{ $exp->company }} @if($exp->location)· {{ $exp->location }}@endif</p>
-                        @if($exp->description)
-                            <p class="text-gray-500 text-sm mt-3 leading-relaxed">{{ $exp->description }}</p>
+            <div class="admin-card p-10 group relative overflow-hidden">
+                <div class="flex items-start gap-8">
+                    {{-- Logo --}}
+                    <div class="flex-none w-24 h-24 bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
+                        @if($exp->logo)
+                            <img src="{{ asset('storage/' . $exp->logo) }}" alt="{{ $exp->company }}" class="w-full h-full object-contain p-2">
+                        @else
+                            <i class="fas fa-building text-3xl text-gray-800"></i>
                         @endif
                     </div>
-                    <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity ml-4 flex-none">
-                        <form action="{{ route('admin.experiences.delete', $exp) }}" method="POST" onsubmit="return confirm('Delete this experience?')">
+
+                    <div class="flex-1">
+                        <div class="flex items-center gap-4 mb-4">
+                            <span class="text-[9px] font-black uppercase tracking-[0.2em] bg-purple-600 text-white px-3 py-1.5 shadow-[0_0_15px_rgba(147,51,234,0.3)]">{{ $exp->period }}</span>
+                        </div>
+                        <h3 class="text-xl font-black tracking-tight text-gray-200 uppercase">{{ $exp->title }}</h3>
+                        <p class="text-[10px] font-bold text-purple-500 uppercase tracking-[0.2em] mt-1">
+                            {{ $exp->company }} @if($exp->location) <span class="text-gray-700 mx-2">/</span> {{ $exp->location }} @endif
+                        </p>
+                        @if($exp->description)
+                            <p class="text-sm text-gray-500 mt-8 leading-relaxed max-w-2xl border-l-2 border-white/5 pl-6 italic">{{ $exp->description }}</p>
+                        @endif
+                    </div>
+
+                    <div class="flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all ml-6">
+                        <form action="{{ route('admin.experiences.delete', $exp) }}" method="POST" onsubmit="return confirm('Erase this transmission record?')">
                             @csrf @method('DELETE')
-                            <button type="submit" class="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200">
-                                <i class="fas fa-trash text-xs"></i>
+                            <button type="submit" class="w-12 h-12 bg-white/5 flex items-center justify-center text-gray-500 hover:text-white hover:bg-red-600 transition-all">
+                                <i class="fas fa-trash-alt text-[10px]"></i>
                             </button>
                         </form>
                     </div>
                 </div>
             </div>
         @empty
-            <div class="bg-white/[0.03] border border-white/10 rounded-2xl p-12 text-center text-gray-600">
-                <i class="fas fa-briefcase text-3xl mb-3 block"></i>
-                <p>No experience added yet</p>
+            <div class="admin-card p-24 text-center opacity-10">
+                <i class="fas fa-history text-6xl mb-6 block"></i>
+                <p class="text-[10px] font-black uppercase tracking-[0.3em]">Temporal Records Vacant</p>
             </div>
         @endforelse
     </div>

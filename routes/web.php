@@ -7,9 +7,11 @@ use App\Http\Controllers\AdminController;
 
 // ─── Portfolio (Public) ────────────────────────────────────
 Route::get('/', [PortfolioController::class, 'index'])->name('portfolio');
+Route::get('/projects-all', [PortfolioController::class, 'allProjects'])->name('projects.all');
 Route::post('/contact', [PortfolioController::class, 'sendContact'])->name('contact.send');
 
 // ─── Auth ──────────────────────────────────────────────────
+Route::get('/admin/login', [AuthController::class, 'loginForm'])->name('login'); // Laravel default auth redirect
 Route::get('/admin/login', [AuthController::class, 'loginForm'])->name('admin.login');
 Route::post('/admin/login', [AuthController::class, 'login']);
 Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
