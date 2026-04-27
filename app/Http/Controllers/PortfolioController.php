@@ -24,6 +24,20 @@ class PortfolioController extends Controller
         ));
     }
 
+    public function projectOverview(Project $project)
+    {
+        $project->load(['sections' => function($query) {
+            $query->where('is_active', true)->orderBy('sort_order');
+        }]);
+        
+        $anotherProject = Project::where('id', '!=', $project->id)
+                                 ->where('is_active', true)
+                                 ->inRandomOrder()
+                                 ->first();
+        
+        return view('projects.show', compact('project', 'anotherProject'));
+    }
+
     public function allProjects()
     {
         return view('projects-all');

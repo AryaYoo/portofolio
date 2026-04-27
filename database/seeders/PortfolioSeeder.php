@@ -52,8 +52,6 @@ class PortfolioSeeder extends Seeder
                 'description' => 'A comprehensive hospital management system migration project focusing on user-centric design principles. The project involved redesigning the entire SIMRS interface to improve usability and efficiency for healthcare professionals.',
                 'category' => 'best',
                 'sort_order' => 1,
-                'icon' => '💊',
-                'icon_color' => '#8b5cf6',
                 'is_active' => true,
             ]
         );
@@ -65,8 +63,6 @@ class PortfolioSeeder extends Seeder
                 'description' => 'A streamlined pharmacy data reporting system designed to simplify complex data workflows. Built with a focus on ease of use and accurate data visualization for pharmacy management.',
                 'category' => 'best',
                 'sort_order' => 2,
-                'icon' => '📊',
-                'icon_color' => '#10b981',
                 'is_active' => true,
             ]
         );
@@ -78,8 +74,6 @@ class PortfolioSeeder extends Seeder
                 'description' => 'A job portal optimization project aimed at improving the overall user experience for both job seekers and employers. Focused on intuitive navigation and efficient job matching algorithms.',
                 'category' => 'best',
                 'sort_order' => 3,
-                'icon' => '💼',
-                'icon_color' => '#3b82f6',
                 'is_active' => true,
             ]
         );
@@ -92,8 +86,6 @@ class PortfolioSeeder extends Seeder
                 'description' => 'Streamlined pharmacy data reporting system.',
                 'category' => 'other',
                 'sort_order' => 1,
-                'icon' => '📋',
-                'icon_color' => '#10b981',
                 'is_active' => true,
             ]
         );
@@ -105,8 +97,6 @@ class PortfolioSeeder extends Seeder
                 'description' => 'A community-driven platform connecting people who need help with volunteers.',
                 'category' => 'other',
                 'sort_order' => 2,
-                'icon' => '🤝',
-                'icon_color' => '#6366f1',
                 'is_active' => true,
             ]
         );
@@ -118,8 +108,6 @@ class PortfolioSeeder extends Seeder
                 'description' => 'An AI-powered waste classification scanner to help with proper waste sorting and recycling.',
                 'category' => 'other',
                 'sort_order' => 3,
-                'icon' => '♻️',
-                'icon_color' => '#22c55e',
                 'is_active' => true,
             ]
         );

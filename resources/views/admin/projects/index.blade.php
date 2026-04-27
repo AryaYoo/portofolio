@@ -64,8 +64,11 @@
                         </td>
                         <td class="px-8 py-5 text-right">
                             <div class="flex items-center justify-end gap-1">
-                                <a href="{{ route('admin.projects.edit', $project) }}" class="w-10 h-10 bg-white/5 flex items-center justify-center text-gray-500 hover:text-white hover:bg-purple-600 transition-all">
+                                <a href="{{ route('admin.projects.edit', $project) }}" class="w-10 h-10 bg-white/5 flex items-center justify-center text-gray-500 hover:text-white hover:bg-purple-600 transition-all" title="Edit Core Info">
                                     <i class="fas fa-pen-nib text-[10px]"></i>
+                                </a>
+                                <a href="{{ route('admin.projects.sections', $project) }}" class="w-10 h-10 bg-white/5 flex items-center justify-center text-gray-500 hover:text-white hover:bg-blue-600 transition-all" title="Manage Modular UI">
+                                    <i class="fas fa-layer-group text-[10px]"></i>
                                 </a>
                                 <form action="{{ route('admin.projects.delete', $project) }}" method="POST" onsubmit="return confirm('Archive this project?')">
                                     @csrf @method('DELETE')

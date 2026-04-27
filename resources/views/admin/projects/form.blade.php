@@ -34,10 +34,22 @@
                 </div>
             </div>
 
-            <div>
-                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Project Metadata (Subtitle)</label>
-                <input type="text" name="subtitle" value="{{ old('subtitle', $project->subtitle) }}" placeholder="e.g. Next.js / Tailwind / Framer"
-                       class="admin-input w-full px-6 py-4 text-sm text-white placeholder-gray-800">
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Project Metadata (Subtitle)</label>
+                    <input type="text" name="subtitle" value="{{ old('subtitle', $project->subtitle) }}" placeholder="e.g. Next.js / Tailwind / Framer"
+                           class="admin-input w-full px-6 py-4 text-sm text-white placeholder-gray-800">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Overview Theme Color (HEX)</label>
+                    <div class="flex gap-4">
+                        <input type="text" name="theme_color" value="{{ old('theme_color', $project->theme_color ?? '#4a5d23') }}" placeholder="#4a5d23"
+                               class="admin-input flex-1 px-6 py-4 text-sm text-white placeholder-gray-800">
+                        <input type="color" value="{{ old('theme_color', $project->theme_color ?? '#4a5d23') }}" 
+                               oninput="this.previousElementSibling.value = this.value"
+                               class="w-14 h-14 bg-white/5 border border-white/10 cursor-pointer p-1">
+                    </div>
+                </div>
             </div>
 
             <div>
@@ -49,13 +61,14 @@
             <div class="grid md:grid-cols-2 gap-10 pb-10 border-b border-white/5">
                 <div>
                     <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-4">Visual Screenshot</label>
-                    @if($project->screenshot)
-                        <div class="mb-6 relative group inline-block overflow-hidden">
-                            <img src="{{ asset('storage/' . $project->screenshot) }}" alt="" class="h-32 border border-white/10 opacity-80 group-hover:opacity-100 transition-all">
-                        </div>
-                    @endif
+                    <div id="preview-container" class="{{ $project->screenshot ? '' : 'hidden' }} mb-6 relative group inline-block overflow-hidden">
+                        <img src="{{ $project->screenshot ? asset('storage/' . $project->screenshot) : '' }}" 
+                             id="screenshot-preview" 
+                             alt="Preview" 
+                             class="h-32 border border-white/10 opacity-80 group-hover:opacity-100 transition-all">
+                    </div>
                     <div class="relative">
-                        <input type="file" name="screenshot" accept="image/*" id="screenshot-input" class="hidden">
+                        <input type="file" name="screenshot" accept="image/*" id="screenshot-input" class="hidden" onchange="previewScreenshot(this)">
                         <label for="screenshot-input" class="inline-flex items-center gap-3 bg-white/5 border border-white/10 hover:border-purple-500/50 px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-white cursor-pointer transition-all">
                             <i class="fas fa-camera"></i>
                             <span>Upload Capture</span>
@@ -63,22 +76,11 @@
                     </div>
                 </div>
                 <div class="space-y-8">
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Symbol</label>
-                            <input type="text" name="icon" value="{{ old('icon', $project->icon) }}" placeholder="🚀"
-                                   class="admin-input w-full px-5 py-4 text-sm text-white placeholder-gray-800">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Priority</label>
-                            <input type="number" name="sort_order" value="{{ old('sort_order', $project->sort_order ?? 0) }}"
-                                   class="admin-input w-full px-5 py-4 text-sm text-white placeholder-gray-800">
-                        </div>
-                    </div>
                     <div>
-                        <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Accent Color (HEX)</label>
-                        <input type="text" name="icon_color" value="{{ old('icon_color', $project->icon_color) }}" placeholder="#8b5cf6"
+                        <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Display Priority</label>
+                        <input type="number" name="sort_order" value="{{ old('sort_order', $project->sort_order ?? 0) }}"
                                class="admin-input w-full px-5 py-4 text-sm text-white placeholder-gray-800">
+                        <p class="text-[9px] text-gray-700 mt-2">Higher numbers appear first</p>
                     </div>
                 </div>
             </div>
@@ -117,3 +119,21 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function previewScreenshot(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('screenshot-preview');
+            const container = document.getElementById('preview-container');
+            
+            preview.src = e.target.result;
+            container.classList.remove('hidden');
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+@endpush

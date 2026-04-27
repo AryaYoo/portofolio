@@ -33,15 +33,37 @@
             </div>
 
             <div class="admin-card p-8">
-                <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6">Workspace Wallpaper</h4>
-                <div id="wallpaper-preview-container" class="{{ $profile && $profile->wallpaper ? '' : 'hidden' }} aspect-video relative group mb-6 overflow-hidden">
-                    <img src="{{ $profile && $profile->wallpaper ? asset('storage/' . $profile->wallpaper) : '' }}" id="wallpaper-preview" alt="Wallpaper" class="w-full h-full object-cover border border-white/10 opacity-60">
+                <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-10">Dynamic Section Wallpapers</h4>
+                
+                <div class="space-y-10">
+                    @for($i = 1; $i <= 4; $i++)
+                    @php $fieldName = "wallpaper_$i"; @endphp
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <label class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Section {{ $i }}</label>
+                            <span class="text-[8px] font-bold text-purple-600 px-2 py-0.5 bg-purple-500/10 uppercase tracking-tighter">
+                                @if($i == 1) Profile @elseif($i == 2) Collab @elseif($i == 3) Certified @else Contact @endif
+                            </span>
+                        </div>
+                        <div id="preview-container-{{ $i }}" class="aspect-video bg-white/5 border border-white/10 relative group mb-3 overflow-hidden">
+                            <img src="{{ $profile && $profile->$fieldName ? asset('storage/' . $profile->$fieldName) : '' }}" 
+                                 id="preview-{{ $i }}" 
+                                 alt="Wallpaper {{ $i }}" 
+                                 class="{{ $profile && $profile->$fieldName ? '' : 'hidden' }} w-full h-full object-cover opacity-60">
+                            @if(!$profile || !$profile->$fieldName)
+                                <div id="placeholder-{{ $i }}" class="absolute inset-0 flex items-center justify-center opacity-20">
+                                    <i class="fas fa-image text-3xl"></i>
+                                </div>
+                            @endif
+                        </div>
+                        <input type="file" name="wallpaper_{{ $i }}" accept="image/*" id="wallpaper-{{ $i }}-input" class="hidden" onchange="previewMultiWallpaper(this, {{ $i }})">
+                        <label for="wallpaper-{{ $i }}-input" class="inline-flex w-full items-center justify-center gap-2 bg-white/5 border border-white/5 hover:border-purple-500/50 px-4 py-3 text-[9px] font-bold uppercase tracking-widest text-gray-500 hover:text-white cursor-pointer transition-all">
+                            <i class="fas fa-plus"></i>
+                            <span>Wallpaper {{ $i }}</span>
+                        </label>
+                    </div>
+                    @endfor
                 </div>
-                <input type="file" name="wallpaper" accept="image/*" id="wallpaper-input" class="hidden" onchange="previewWallpaper(this)">
-                <label for="wallpaper-input" class="inline-flex w-full items-center justify-center gap-2 bg-white/5 border border-white/10 hover:border-purple-500/50 px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-white cursor-pointer transition-all">
-                    <i class="fas fa-image"></i>
-                    <span>Set Wallpaper</span>
-                </label>
             </div>
         </div>
 
@@ -145,15 +167,16 @@ function previewImage(input, previewId, placeholderId) {
     }
 }
 
-function previewWallpaper(input) {
+function previewMultiWallpaper(input, index) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            const preview = document.getElementById('wallpaper-preview');
-            const container = document.getElementById('wallpaper-preview-container');
+            const preview = document.getElementById('preview-' + index);
+            const placeholder = document.getElementById('placeholder-' + index);
             
             preview.src = e.target.result;
-            container.classList.remove('hidden');
+            preview.classList.remove('hidden');
+            if (placeholder) placeholder.classList.add('hidden');
         }
         reader.readAsDataURL(input.files[0]);
     }

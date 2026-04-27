@@ -1,8 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-@php $wallpaper = $profile->wallpaper ?? null; @endphp
-<div class="page-wrapper {{ $wallpaper ? 'has-wallpaper' : '' }}" @if($wallpaper) style="background-image: url('{{ asset('storage/' . $wallpaper) }}')" @endif>
+<div class="page-wrapper">
+    {{-- Dynamic Background Layers --}}
+    <div class="wallpapers-container">
+        @for($i = 1; $i <= 4; $i++)
+            @php $fieldName = "wallpaper_$i"; $wall = $profile->$fieldName ?? null; @endphp
+            <div id="bg-layer-{{ $i }}" 
+                 class="wallpaper-layer {{ $i == 1 ? 'active' : '' }}" 
+                 @if($wall) style="background-image: url('{{ asset('storage/' . $wall) }}')" @endif>
+            </div>
+        @endfor
+        <div class="wallpaper-overlay"></div>
+    </div>
     {{-- ═══════════════════════════════════════════════════════════
          LEFT PANEL — Projects Hub (Fixed)
          ═══════════════════════════════════════════════════════════ --}}
@@ -18,13 +28,13 @@
             <div class="highlight-carousel-wrap">
                 <div id="highlight-carousel" class="highlight-carousel">
                     @forelse($bestProjects as $project)
-                        <a href="{{ $project->demo_url ?? '#' }}" class="highlight-card" target="_blank" rel="noopener">
+                        <a href="{{ route('projects.show', $project) }}" class="highlight-card">
                             <div class="highlight-card-img">
                                 @if($project->screenshot)
                                     <img src="{{ asset('storage/' . $project->screenshot) }}" alt="{{ $project->title }}">
                                 @else
                                     <div class="highlight-card-placeholder">
-                                        <span>{{ $project->icon ?? '🚀' }}</span>
+                                        <i class="fas fa-image text-3xl opacity-20"></i>
                                     </div>
                                 @endif
                             </div>
@@ -34,7 +44,7 @@
                             </div>
                         </a>
                     @empty
-                        <div class="empty-state">No projects yet.</div>
+                        <div class="empty-state"></div>
                     @endforelse
                 </div>
                 @if($bestProjects->count() > 2)
@@ -55,16 +65,15 @@
 
             <div class="other-projects-grid">
                 @forelse($otherProjects->take(4) as $project)
-                    <a href="{{ $project->demo_url ?? '#' }}"
-                       class="other-project-pill"
-                       target="_blank" rel="noopener">
-                        <span class="pill-icon" style="background: {{ $project->icon_color ?? '#8b5cf6' }}20;">
-                            {{ $project->icon ?? '📁' }}
+                    <a href="{{ route('projects.show', $project) }}"
+                       class="other-project-pill">
+                        <span class="pill-icon">
+                            <i class="fas fa-folder"></i>
                         </span>
                         <span>{{ $project->title }}</span>
                     </a>
                 @empty
-                    <div class="empty-state">No projects yet.</div>
+                    <div class="empty-state"></div>
                 @endforelse
 
                 @if($otherProjects->count() > 4)
@@ -123,92 +132,99 @@
                 <h2 class="portal-title">Collaborations</h2>
                 <p class="text-gray-500 mb-8">Selected organizations and partners I've had the privilege to work with.</p>
                 
-                <div class="collab-grid">
-                    @forelse($experiences as $exp)
-                        <button class="collab-logo-card" onclick='openExpModal({!! json_encode($exp) !!})' aria-label="View {{ $exp->company }} details">
-                            @if($exp->logo)
-                                <img src="{{ asset('storage/' . $exp->logo) }}" alt="{{ $exp->company }}">
-                            @else
-                                <div class="collab-logo-placeholder">
-                                    <span>{{ substr($exp->company, 0, 1) }}</span>
+                @if($experiences->isNotEmpty())
+                    <div class="collab-grid">
+                        @foreach($experiences as $exp)
+                            <button class="collab-logo-card" onclick='openExpModal({!! json_encode($exp) !!})' aria-label="View {{ $exp->company }} details">
+                                @if($exp->logo)
+                                    <img src="{{ asset('storage/' . $exp->logo) }}" alt="{{ $exp->company }}">
+                                @else
+                                    <div class="collab-logo-placeholder">
+                                        <span>{{ substr($exp->company, 0, 1) }}</span>
+                                    </div>
+                                @endif
+                                <div class="collab-logo-hover">
+                                    <i class="fas fa-expand-alt"></i>
                                 </div>
-                            @endif
-                            <div class="collab-logo-hover">
-                                <i class="fas fa-expand-alt"></i>
-                            </div>
-                        </button>
-                    @empty
-                        <div class="text-gray-400 italic">No collaborations added yet.</div>
-                    @endforelse
-                </div>
+                            </button>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="empty-state">
+                        <i class="fas fa-handshake-slash opacity-20 text-4xl mb-4 block"></i>
+                        <p class="text-gray-400 italic">No collaborations added yet.</p>
+                    </div>
+                @endif
             </div>
 
-            {{-- 3. Skills & Sertifikasi --}}
+            {{-- 3. Skills & Certifications --}}
             <div class="portal-section" id="section-2">
                 <h2 class="portal-title">Skills & Certifications</h2>
+                <p class="text-gray-500 mb-8">Verified expertise and professional certifications.</p>
 
-                @php $skillCategories = $skills->groupBy('category'); @endphp
-                <div class="skills-wrapper">
-                    @foreach($skillCategories as $category => $categorySkills)
-                        <div class="skill-group">
-                            <h4>{{ $category }}</h4>
-                            @foreach($categorySkills as $skill)
-                                <div class="skill-bar-container">
-                                    <div class="skill-label">
-                                        <span>{{ $skill->icon }} {{ $skill->name }}</span>
-                                        <span>{{ $skill->level }}%</span>
+                @if($skills->isNotEmpty())
+                    <div class="cert-grid">
+                        @foreach($skills as $skill)
+                            <button class="cert-card" onclick='openCertModal({!! json_encode($skill) !!})' aria-label="View {{ $skill->name }} details">
+                                @if($skill->image)
+                                    <img src="{{ asset('storage/' . $skill->image) }}" alt="{{ $skill->name }}">
+                                @else
+                                    <div class="cert-card-placeholder">
+                                        <span>{{ $skill->icon ?? '📜' }}</span>
                                     </div>
-                                    <div class="skill-track">
-                                        <div class="skill-fill" data-level="{{ $skill->level }}"></div>
-                                    </div>
+                                @endif
+                                <div class="cert-card-hover">
+                                    <i class="fas fa-expand-alt"></i>
                                 </div>
-                            @endforeach
-                        </div>
-                    @endforeach
-                </div>
+                            </button>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="empty-state">
+                        <i class="fas fa-certificate opacity-20 text-4xl mb-4 block"></i>
+                        <p class="text-gray-400 italic">No certifications added yet.</p>
+                    </div>
+                @endif
             </div>
 
             {{-- 4. Contact --}}
             <div class="portal-section" id="section-3">
-                <h2 class="portal-title">Contact Information</h2>
-                <p class="text-gray-600 mb-6">Have a project in mind or want to collaborate? Feel free to reach out!</p>
+                <h2 class="portal-title">Contact & Information</h2>
+                <p class="text-gray-500 mb-10">Have a project in mind? Reach out via message or follow my digital journey.</p>
 
-                <div class="mb-8">
-                    @if($profile && $profile->email)
-                        <div class="contact-item">
-                            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
-                            <div>
-                                <div class="contact-label">Email</div>
-                                <div class="contact-value">{{ $profile->email }}</div>
-                            </div>
+                {{-- Contact Form --}}
+                <form action="{{ route('contact.send') }}" method="POST" class="contact-form w-full max-w-md mx-auto mb-12">
+                    @csrf
+                    @if(session('success'))
+                        <div class="bg-green-100 text-green-700 p-4 mb-6 text-sm font-bold uppercase tracking-widest border-l-4 border-green-500">
+                            {{ session('success') }}
                         </div>
                     @endif
-                    @if($profile && $profile->phone)
-                        <div class="contact-item">
-                            <div class="contact-icon"><i class="fas fa-phone"></i></div>
-                            <div>
-                                <div class="contact-label">Phone</div>
-                                <div class="contact-value">{{ $profile->phone }}</div>
-                            </div>
-                        </div>
-                    @endif
-                    @if($profile && $profile->location)
-                        <div class="contact-item">
-                            <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
-                            <div>
-                                <div class="contact-label">Location</div>
-                                <div class="contact-value">{{ $profile->location }}</div>
-                            </div>
-                        </div>
-                    @endif
+                    
+                    <div class="space-y-4">
+                        <input type="text" name="name" placeholder="YOUR NAME" required class="contact-input">
+                        <input type="email" name="email" placeholder="YOUR EMAIL" required class="contact-input">
+                        <textarea name="message" rows="4" placeholder="HOW CAN I HELP?" required class="contact-input resize-none"></textarea>
+                        <button type="submit" class="contact-submit-btn">
+                            SEND MESSAGE
+                        </button>
+                    </div>
+                </form>
+
+                {{-- Social Media --}}
+                <div class="social-wrapper">
+                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Digital Ecosystem</p>
+                    <div class="social-box-grid">
+                        @php $socials = $profile->social_links ?? []; @endphp
+                        @foreach(['github', 'linkedin', 'dribbble', 'instagram', 'twitter'] as $platform)
+                            @if(!empty($socials[$platform]))
+                                <a href="{{ $socials[$platform] }}" target="_blank" rel="noopener" class="social-icon-box" title="{{ ucfirst($platform) }}">
+                                    <i class="fab fa-{{ $platform }}"></i>
+                                </a>
+                            @endif
+                        @endforeach
+                    </div>
                 </div>
-
-                @if($profile && $profile->email)
-                    <a href="mailto:{{ $profile->email }}" class="contact-btn">
-                        <span>Send an Email</span>
-                        <i class="fas fa-paper-plane"></i>
-                    </a>
-                @endif
             </div>
 
         </div>
@@ -253,7 +269,24 @@
         </div>
     </div>
 
+    {{-- ═══════════════════════════════════════════════════════════
+         CERT MODAL
+         ═══════════════════════════════════════════════════════════ --}}
+    <div id="cert-modal" class="exp-modal-overlay hidden" onclick="closeCertModal()">
+        <div class="exp-modal-content" style="max-width: 520px;" onclick="event.stopPropagation()">
+            <button class="exp-modal-close" onclick="closeCertModal()"><i class="fas fa-times"></i></button>
+            <div id="cert-modal-img" class="cert-modal-image"></div>
+            <div class="exp-modal-body">
+                <h3 id="cert-modal-title" class="text-xl font-bold text-gray-900 mb-1"></h3>
+                <p id="cert-modal-category" class="text-xs font-bold text-purple-600 uppercase tracking-widest mb-4"></p>
+                <p id="cert-modal-desc" class="text-gray-500 text-sm leading-relaxed mb-5"></p>
+                <div id="cert-modal-tags" class="flex flex-wrap gap-2"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // ─── Experience Modal ─────────────────────────────────
         function openExpModal(exp) {
             const modal = document.getElementById('exp-modal');
             document.getElementById('modal-title').innerText = exp.title;
@@ -275,6 +308,43 @@
 
         function closeExpModal() {
             document.getElementById('exp-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // ─── Certificate Modal ────────────────────────────────
+        function openCertModal(cert) {
+            const modal = document.getElementById('cert-modal');
+            document.getElementById('cert-modal-title').innerText = cert.name;
+            document.getElementById('cert-modal-category').innerText = cert.category || '';
+            document.getElementById('cert-modal-desc').innerText = cert.description || 'No description available.';
+
+            // Image
+            const imgWrap = document.getElementById('cert-modal-img');
+            if (cert.image) {
+                imgWrap.innerHTML = `<img src="/storage/${cert.image}" alt="${cert.name}" class="w-full h-full object-cover">`;
+                imgWrap.style.display = 'block';
+            } else {
+                imgWrap.style.display = 'none';
+            }
+
+            // Tags
+            const tagsWrap = document.getElementById('cert-modal-tags');
+            tagsWrap.innerHTML = '';
+            if (cert.tags && cert.tags.length > 0) {
+                cert.tags.forEach(tag => {
+                    const span = document.createElement('span');
+                    span.className = 'cert-tag';
+                    span.innerText = tag;
+                    tagsWrap.appendChild(span);
+                });
+            }
+
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCertModal() {
+            document.getElementById('cert-modal').classList.remove('active');
             document.body.style.overflow = '';
         }
     </script>

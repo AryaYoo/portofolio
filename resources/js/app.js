@@ -28,11 +28,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 dots[currentSectionIndex].classList.add('active');
             }
 
-            // Animate skills if Section 2 (Skills) is active
-            if (currentSectionIndex === 2) {
-                animateSkillBars();
-            }
+            // Sync dynamic background
+            updateWallpaper(currentSectionIndex);
+
+            // We removed skill bars in favor of certificate grid, so no extra animation needed here
         });
+
+        function updateWallpaper(index) {
+            const layers = document.querySelectorAll('.wallpaper-layer');
+            const targetId = `bg-layer-${index + 1}`;
+            
+            layers.forEach(layer => {
+                if (layer.id === targetId) {
+                    layer.classList.add('active');
+                } else {
+                    layer.classList.remove('active');
+                }
+            });
+        }
 
         // 2. Click dot to scroll to section
         dots.forEach((dot) => {
@@ -105,20 +118,4 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ─── Skill Bars Animation ────────────────────────────────
-    let skillsAnimated = false;
-    function animateSkillBars() {
-        if (skillsAnimated) return;
-        
-        const skillFills = document.querySelectorAll('.skill-fill');
-        skillFills.forEach(fill => {
-            const level = fill.getAttribute('data-level');
-            // Slight delay to allow CSS transitions to trigger visually
-            setTimeout(() => {
-                fill.style.width = level + '%';
-            }, 100);
-        });
-        
-        skillsAnimated = true;
-    }
 });

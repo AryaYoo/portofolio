@@ -7,6 +7,7 @@ use App\Http\Controllers\AdminController;
 
 // ─── Portfolio (Public) ────────────────────────────────────
 Route::get('/', [PortfolioController::class, 'index'])->name('portfolio');
+Route::get('/projects/{project}', [PortfolioController::class, 'projectOverview'])->name('projects.show');
 Route::get('/projects-all', [PortfolioController::class, 'allProjects'])->name('projects.all');
 Route::post('/contact', [PortfolioController::class, 'sendContact'])->name('contact.send');
 
@@ -31,6 +32,13 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/projects/{project}/edit', [AdminController::class, 'editProject'])->name('projects.edit');
     Route::put('/projects/{project}', [AdminController::class, 'updateProject'])->name('projects.update');
     Route::delete('/projects/{project}', [AdminController::class, 'deleteProject'])->name('projects.delete');
+
+    // Project Sections (Modular Page)
+    Route::get('/projects/{project}/sections', [AdminController::class, 'sections'])->name('projects.sections');
+    Route::post('/projects/{project}/sections', [AdminController::class, 'storeSection'])->name('projects.sections.store');
+    Route::get('/sections/{section}/edit', [AdminController::class, 'editSection'])->name('projects.sections.edit');
+    Route::put('/sections/{section}', [AdminController::class, 'updateSection'])->name('projects.sections.update');
+    Route::delete('/sections/{section}', [AdminController::class, 'deleteSection'])->name('projects.sections.delete');
 
     // Skills
     Route::get('/skills', [AdminController::class, 'skills'])->name('skills');

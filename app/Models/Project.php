@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Project extends Model
 {
     protected $fillable = [
-        'title', 'subtitle', 'description', 'screenshot', 'icon', 'icon_color',
+        'title', 'subtitle', 'theme_color', 'description', 'screenshot', 'icon', 'icon_color',
         'demo_url', 'repo_url', 'category', 'sort_order', 'is_active',
     ];
 
@@ -23,5 +23,9 @@ class Project extends Model
     public function scopeOther($query)
     {
         return $query->where('category', 'other')->where('is_active', true)->orderBy('sort_order');
+    }
+    public function sections()
+    {
+        return $this->hasMany(ProjectSection::class)->orderBy('sort_order');
     }
 }
