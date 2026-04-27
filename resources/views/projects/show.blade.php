@@ -18,7 +18,7 @@
     <section class="projects-hub relative border-none flex flex-col justify-between" style="color: white; background: transparent;">
         <div class="relative z-10 flex flex-col h-full pl-0">
             {{-- Back Button --}}
-            <div class="mb-20">
+            <div class="mb-10">
                 <a href="{{ route('portfolio') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 transition-all text-xs text-gray-300 hover:text-white border border-white/10 rounded-none">
                     <i class="fas fa-chevron-left text-[10px]"></i>
                     <span>Back</span>
@@ -38,8 +38,8 @@
 
             {{-- Another Project --}}
             @if($anotherProject)
-                <div class="section-block mt-16">
-                    <h2 class="text-xl font-bold mb-6 tracking-tight">Another Project</h2>
+                <div class="section-block mt-8 recommendation-section">
+                    <h2 class="text-xl font-bold mb-6 tracking-tight">Another Project <i>(Recommendation)</i></h2>
                     
                     <a href="{{ route('projects.show', $anotherProject) }}" class="block max-w-[320px] bg-white/5 backdrop-blur-md border border-white/10 hover:border-purple-500/50 transition-all group overflow-hidden">
                         <div class="h-[180px] w-full relative">
@@ -65,6 +65,14 @@
          RIGHT PANEL — Modular Content (Scrollable)
          ═══════════════════════════════════════════════════════════ --}}
     <section class="profile-portal bg-white text-gray-900">
+        {{-- Scroll Indicator (Right Side) --}}
+        <div class="scroll-indicator" id="scroll-hint">
+            <div class="mouse">
+                <div class="wheel"></div>
+            </div>
+            <span class="scroll-text">Scroll</span>
+        </div>
+
         <div class="portal-scroll-container px-4 md:px-12 py-20" id="content-scroll">
             
             <div class="max-w-4xl mx-auto space-y-32">
@@ -142,14 +150,25 @@
                         <p class="text-gray-400 font-bold uppercase tracking-widest">No modular sections found</p>
                     </div>
                 @endforelse
-            </div>
 
-            {{-- Footer Area --}}
-            <div class="mt-40 text-center opacity-20 font-black uppercase tracking-[0.5em] text-[10px]">
-                End of Presentation
+                {{-- Footer Area --}}
+                <div class="mt-40 mb-20 text-center opacity-20 font-black uppercase tracking-[0.5em] text-[10px] w-full block clear-both footer-area">
+                    End of Presentation
+                </div>
             </div>
         </div>
     </section>
+
+    {{-- Minimap --}}
+    @if($project->sections->count() > 0)
+        <nav class="overview-minimap" id="overview-minimap">
+            @foreach($project->sections as $idx => $sec)
+                <button class="minimap-dot {{ $idx === 0 ? 'active' : '' }}" data-index="{{ $idx }}" title="Section {{ $idx + 1 }}">
+                    <span class="minimap-square"></span>
+                </button>
+            @endforeach
+        </nav>
+    @endif
 
     {{-- Scroll To Top Button --}}
     <button id="scroll-top" class="fixed bottom-10 right-10 w-12 h-12 flex items-center justify-center text-white shadow-2xl transition-all translate-y-20 opacity-0 z-[100]" style="background-color: var(--project-theme)">
@@ -192,26 +211,160 @@
     translate: 0;
     opacity: 1;
 }
+/* ─── Responsive ───────────────────────────────────────── */
 @media (max-width: 1024px) {
-    .page-wrapper { flex-direction: column; height: auto; }
-    .projects-hub { flex: none; width: 100%; height: auto; padding: 40px; }
-    .profile-portal { flex: none; width: 100%; height: auto; }
-    .portal-scroll-container { height: auto; overflow: visible; }
+    html, body {
+        overflow: auto;
+        height: auto;
+    }
+    .page-wrapper { flex-direction: column; height: auto; overflow: visible; }
+    .projects-hub { 
+        flex: none; 
+        width: 100%; 
+        padding: 3rem 1.5rem; 
+        min-height: auto;
+        height: auto;
+        justify-content: flex-start;
+    }
+    .recommendation-section { display: none; }
+    .scroll-indicator { display: none; }
+    .footer-area { margin-top: 2rem !important; margin-bottom: 1rem !important; }
+    .profile-portal { 
+        flex: none; 
+        width: 100%; 
+        height: auto; 
+        clip-path: none;
+        border-top: 1px solid rgba(0,0,0,0.05);
+    }
+    .portal-scroll-container { 
+        height: auto; 
+        overflow: visible; 
+        padding: 4rem 1.5rem;
+    }
+}
+@media (max-width: 640px) {
+    .projects-hub { padding: 2.5rem 1.25rem; }
+    .portal-scroll-container { padding: 3rem 1.25rem; }
+    .section-block { margin-bottom: 2.5rem; }
+    #scroll-top { bottom: 1.5rem; right: 1.5rem; }
+}
+
+/* ─── Reveal Animations ───────────────────────────────── */
+.modular-section {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform, opacity;
+}
+.modular-section.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ─── Overview Minimap ────────────────────────────────── */
+.overview-minimap {
+    position: fixed;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    z-index: 50;
+}
+.minimap-dot {
+    background: transparent;
+    border: none;
+    padding: 0.375rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    outline: none;
+}
+.minimap-square {
+    width: 0.625rem;
+    height: 0.625rem;
+    background: #cbd5e1;
+    transition: all 0.3s;
+}
+.minimap-dot:hover .minimap-square {
+    background: #94a3b8;
+    transform: scale(1.2);
+}
+.minimap-dot.active .minimap-square {
+    background: var(--project-theme, #9333ea);
+    transform: scale(1.4);
+    box-shadow: 0 0 8px rgba(147, 51, 234, 0.4);
+}
+@media (max-width: 1024px) {
+    .overview-minimap { display: none; }
 }
 </style>
 
-@push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const scrollContainer = document.querySelector('.portal-scroll-container');
         const scrollBtn = document.getElementById('scroll-top');
 
         scrollContainer.addEventListener('scroll', () => {
-            if (scrollContainer.scrollTop > 300) {
+            if (scrollContainer.scrollTop > 50) {
                 scrollBtn.classList.add('visible');
+                document.getElementById('scroll-hint').style.opacity = '0';
+                document.getElementById('scroll-hint').style.pointerEvents = 'none';
             } else {
                 scrollBtn.classList.remove('visible');
+                document.getElementById('scroll-hint').style.opacity = '0.3';
             }
+        });
+
+        // ─── Reveal on Scroll ────────────────────────────────
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                }
+            });
+        }, { 
+            threshold: 0.15,
+            root: scrollContainer
+        });
+
+        document.querySelectorAll('.modular-section').forEach(section => {
+            revealObserver.observe(section);
+        });
+
+        // ─── Minimap Navigation ──────────────────────────────
+        const sections = document.querySelectorAll('.modular-section');
+        const minimapDots = document.querySelectorAll('.minimap-dot');
+
+        // Click to scroll
+        minimapDots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                const idx = parseInt(dot.dataset.index);
+                if (sections[idx]) {
+                    sections[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        });
+
+        // Track active section on scroll
+        const minimapObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const idx = Array.from(sections).indexOf(entry.target);
+                    minimapDots.forEach((d, i) => {
+                        d.classList.toggle('active', i === idx);
+                    });
+                }
+            });
+        }, {
+            threshold: 0.4,
+            root: scrollContainer
+        });
+
+        sections.forEach(section => {
+            minimapObserver.observe(section);
         });
 
         scrollBtn.addEventListener('click', () => {
@@ -222,5 +375,4 @@
         });
     });
 </script>
-@endpush
 @endsection

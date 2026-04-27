@@ -30,8 +30,8 @@ class PortfolioController extends Controller
             $query->where('is_active', true)->orderBy('sort_order');
         }]);
         
-        $anotherProject = Project::where('id', '!=', $project->id)
-                                 ->where('is_active', true)
+        $anotherProject = Project::best()
+                                 ->where('id', '!=', $project->id)
                                  ->inRandomOrder()
                                  ->first();
         
@@ -40,7 +40,9 @@ class PortfolioController extends Controller
 
     public function allProjects()
     {
-        return view('projects-all');
+        $profile = Profile::first();
+        $projects = Project::where('is_active', true)->orderBy('sort_order')->get();
+        return view('projects-all', compact('profile', 'projects'));
     }
 
     public function sendContact(Request $request)

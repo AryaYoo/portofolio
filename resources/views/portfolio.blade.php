@@ -79,7 +79,7 @@
                 @if($otherProjects->count() > 4)
                     <a href="{{ route('projects.all') }}" class="other-project-pill">
                         <span class="pill-icon" style="background: rgba(139,92,246,0.2); border-radius: 0;">
-                            <i class="fas fa-th" style="color: white; font-size: 0.75rem;"></i>
+                            <i class="fas fa-th-large" style="color: white; font-size: 0.75rem;"></i>
                         </span>
                         <span>More</span>
                     </a>
@@ -92,6 +92,30 @@
          RIGHT PANEL — Profile Portal (Scrollable)
          ═══════════════════════════════════════════════════════════ --}}
     <section class="profile-portal">
+        {{-- Floating Mobile Swipe Hint --}}
+        <div class="mobile-swipe-hint" id="mobile-swipe-hint">
+            <div class="swipe-hand">
+                <i class="fas fa-hand-pointer"></i>
+            </div>
+            <span>Swipe Profile</span>
+        </div>
+
+        {{-- Mobile Horizontal Dots (Minimap) --}}
+        <div class="mobile-dots-nav" id="mobile-dots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+
+        {{-- Scroll Indicator (Right Side) --}}
+        <div class="scroll-indicator" id="scroll-hint">
+            <div class="mouse">
+                <div class="wheel"></div>
+            </div>
+            <span class="scroll-text">Scroll</span>
+        </div>
+
         <div class="portal-scroll-container" id="portal-scroll">
             
             {{-- 1. Profil --}}
@@ -129,8 +153,8 @@
 
             {{-- 2. Company yang telah berkolaborasi --}}
             <div class="portal-section" id="section-1">
-                <h2 class="portal-title">Collaborations</h2>
-                <p class="text-gray-500 mb-8">Selected organizations and partners I've had the privilege to work with.</p>
+                <h2 class="portal-title">Experience</h2>
+                <p class="text-gray-500 mb-8">Companies that have collaborated with me.</p>
                 
                 @if($experiences->isNotEmpty())
                     <div class="collab-grid">
@@ -286,7 +310,47 @@
     </div>
 
     <script>
-        // ─── Experience Modal ─────────────────────────────────
+        // ─── Mobile Slider Dots & Hint ────────────────────────
+        const portalScroll = document.getElementById('portal-scroll');
+        const dotsNav = document.getElementById('mobile-dots');
+        const dots = document.querySelectorAll('#mobile-dots .dot');
+        const swipeHint = document.getElementById('mobile-swipe-hint');
+        let hasSwiped = false;
+
+        if (portalScroll && dots.length > 0) {
+            // 1. Update dots on scroll
+            portalScroll.addEventListener('scroll', () => {
+                const scrollLeft = portalScroll.scrollLeft;
+                const width = portalScroll.offsetWidth; // Use offsetWidth for better accuracy
+                const activeIdx = Math.round(scrollLeft / width);
+
+                dots.forEach((dot, idx) => {
+                    dot.classList.toggle('active', idx === activeIdx);
+                });
+
+                // 2. Permanently hide Hint after first swipe
+                if (!hasSwiped && scrollLeft > 20) {
+                    hasSwiped = true;
+                    if (swipeHint) {
+                        swipeHint.style.opacity = '0';
+                        setTimeout(() => swipeHint.remove(), 500);
+                    }
+                }
+            }, { passive: true });
+
+            // 3. Make dots clickable
+            dots.forEach((dot, idx) => {
+                dot.addEventListener('click', () => {
+                    const width = portalScroll.offsetWidth;
+                    portalScroll.scrollTo({
+                        left: idx * width,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        }
+
+        // ─── Experience Modal ────────────────────────────────
         function openExpModal(exp) {
             const modal = document.getElementById('exp-modal');
             document.getElementById('modal-title').innerText = exp.title;
@@ -346,6 +410,20 @@
         function closeCertModal() {
             document.getElementById('cert-modal').classList.remove('active');
             document.body.style.overflow = '';
+        }
+
+        // ─── Scroll Hint ─────────────────────────────────────
+        const scrollHint = document.getElementById('scroll-hint');
+        if (portalScroll && scrollHint) {
+            portalScroll.addEventListener('scroll', () => {
+                if (portalScroll.scrollTop > 50) {
+                    scrollHint.style.opacity = '0';
+                    scrollHint.style.pointerEvents = 'none';
+                } else {
+                    scrollHint.style.opacity = '0.3';
+                    scrollHint.style.pointerEvents = 'auto';
+                }
+            });
         }
     </script>
 </div>
