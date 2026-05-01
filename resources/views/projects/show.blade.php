@@ -97,7 +97,7 @@
                             @case('model1') {{-- Text Left, Image Right --}}
                                 <div class="grid md:grid-cols-2 gap-12 items-center">
                                     <div>
-                                        <h2 class="text-3xl font-black mb-6" style="color: var(--project-theme)">{{ $section->title }}</h2>
+                                        <h2 class="text-3xl font-black mb-6 modular-header">{{ $section->title }}</h2>
                                         <div class="text-gray-600 leading-relaxed">
                                             {!! nl2br(e($section->content)) !!}
                                         </div>
@@ -118,7 +118,7 @@
                                         @endif
                                     </div>
                                     <div class="order-1 md:order-2">
-                                        <h2 class="text-3xl font-black mb-6" style="color: var(--project-theme)">{{ $section->title }}</h2>
+                                        <h2 class="text-3xl font-black mb-6 modular-header">{{ $section->title }}</h2>
                                         <div class="text-gray-600 leading-relaxed">
                                             {!! nl2br(e($section->content)) !!}
                                         </div>
@@ -128,7 +128,7 @@
 
                             @case('model3') {{-- Centered Text --}}
                                 <div class="text-center max-w-2xl mx-auto">
-                                    <h2 class="text-3xl font-black mb-6" style="color: var(--project-theme)">{{ $section->title }}</h2>
+                                    <h2 class="text-3xl font-black mb-6 modular-header">{{ $section->title }}</h2>
                                     <div class="text-gray-600 leading-relaxed">
                                         {!! nl2br(e($section->content)) !!}
                                     </div>
@@ -137,7 +137,7 @@
 
                             @case('demo')
                                 <div class="text-center py-20 border-y border-gray-100">
-                                    <h2 class="text-2xl font-black mb-8" style="color: var(--project-theme)">Try Demo Here !</h2>
+                                    <h2 class="text-2xl font-black mb-8 modular-header">Try Demo Here !</h2>
                                     @if($project->demo_url)
                                         <a href="{{ $project->demo_url }}" target="_blank" class="inline-block px-10 py-4 text-white font-black uppercase tracking-widest transition-all hover:scale-105" style="background-color: var(--project-theme)">
                                             Demo

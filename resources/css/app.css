@@ -164,8 +164,8 @@ body.has-custom-cursor select {
 /* ─── Theme Toggle (Square Slide) ────────────────────────── */
 .theme-switch-container {
     position: fixed;
-    top: 2rem;
-    right: 2rem;
+    top: 60px;
+    right: 60px;
     z-index: 110;
 }
 
@@ -320,50 +320,50 @@ body.light-theme .modular-section div {
 .profile-portal h1,
 .profile-portal h2,
 .profile-portal h3 {
-    color: #f8fafc !important;
+    color: #f8fafc;
     transition: color 0.5s ease;
 }
 
 body.light-theme .profile-portal h1,
 body.light-theme .profile-portal h2,
 body.light-theme .profile-portal h3 {
-    color: #111827 !important;
+    color: #111827;
 }
 
 .collab-logo-card,
 .cert-card,
 .contact-input {
-    background: rgba(255, 255, 255, 0.03) !important;
-    border-color: rgba(255, 255, 255, 0.1) !important;
-    color: white !important;
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.1);
+    color: white;
 }
 
 body.light-theme .collab-logo-card,
 body.light-theme .cert-card,
 body.light-theme .contact-input {
-    background: #f8fafc !important;
-    border-color: #e2e8f0 !important;
-    color: #1e293b !important;
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #1e293b;
 }
 
 .exp-modal-content {
-    background: #1e293b !important;
-    color: white !important;
+    background: #1e293b;
+    color: white;
 }
 
 body.light-theme .exp-modal-content {
-    background: white !important;
-    color: #1e293b !important;
+    background: white;
+    color: #1e293b;
 }
 
 .exp-modal-meta,
 .exp-modal-desc {
-    color: #94a3b8 !important;
+    color: #94a3b8;
 }
 
 body.light-theme .exp-modal-meta,
 body.light-theme .exp-modal-desc {
-    color: #64748b !important;
+    color: #64748b;
 }
 
 /* ─── LEFT: Projects Hub (Fixed) ────────────────────────── */
@@ -1274,14 +1274,14 @@ body.light-theme .map-dot::before {
     }
 
     .theme-switch-container {
-        top: 1.5rem;
+        top: 2.5rem;
         right: 1.5rem;
     }
 
     .mobile-dots-nav {
         display: flex;
         position: absolute;
-        top: calc(1.5rem + 3px);
+        top: calc(2.5rem + 3px);
         /* Sejajar tengah dengan toggle 28px */
         left: 50%;
         transform: translateX(-50%);
@@ -1456,4 +1456,15 @@ body.light-theme .map-dot::before {
         bottom: 1.5rem;
         right: 1.5rem;
     }
+}
+
+/* ─── Modular Section Headers ─────────────────────────── */
+/* Specificity: .profile-portal .modular-header = 0,2,0 > .profile-portal h2 = 0,1,1 */
+.profile-portal .modular-header {
+    color: white;
+    transition: color 0.5s ease;
+}
+
+body.light-theme .profile-portal .modular-header {
+    color: var(--project-theme);
 }
