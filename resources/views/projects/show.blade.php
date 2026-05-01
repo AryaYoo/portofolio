@@ -18,7 +18,7 @@
     {{-- ═══════════════════════════════════════════════════════════
          LEFT PANEL — Project Context (Fixed)
          ═══════════════════════════════════════════════════════════ --}}
-    <section class="projects-hub relative border-none flex flex-col justify-between" style="color: white; background: transparent;">
+    <section class="projects-hub">
         <div class="relative z-10 flex flex-col h-full pl-0">
             {{-- Back Button --}}
             <div class="mb-10">
@@ -36,7 +36,7 @@
                 <p class="text-sm leading-relaxed text-gray-300 max-w-sm">
                     {{ $project->subtitle ?? $project->description }}
                 </p>
-                <div class="w-full max-w-sm h-px bg-white/20 mt-12"></div>
+                <div class="w-full max-w-sm h-px bg-white/20 mt-12 hidden lg:block"></div>
             </div>
 
             {{-- Another Project --}}
@@ -186,13 +186,31 @@
     height: 100vh;
     overflow: hidden;
 }
-.projects-hub {
-    flex: 0 0 450px;
-    height: 100vh;
-    padding: 60px;
-    z-index: 10;
-    position: relative;
-    overflow: hidden;
+@media (min-width: 1025px) {
+    .projects-hub {
+        flex: 0 0 450px;
+        height: 100vh;
+        padding: 60px;
+        z-index: 10;
+        position: relative;
+        overflow: hidden;
+        color: white;
+    }
+}
+@media (max-width: 1024px) {
+    .projects-hub {
+        width: 100%;
+        height: auto;
+        padding: 2.5rem 1.5rem;
+        position: relative;
+        border: none !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: auto;
+        color: white;
+        background: transparent;
+    }
 }
 .profile-portal {
     flex: 1;
@@ -265,7 +283,7 @@
 /* ─── Overview Minimap ────────────────────────────────── */
 .overview-minimap {
     position: fixed;
-    right: 2rem;
+    right: 60px;
     top: 50%;
     transform: translateY(-50%);
     display: flex;

@@ -103,9 +103,7 @@
             <span>Swipe Profile</span>
         </div>
 
-        {{-- Mini Map --}}
-        <div class="mini-map">
-        </div>
+
 
         {{-- Mobile Horizontal Dots (Top) --}}
         <div class="mobile-dots-nav" id="mobile-dots">

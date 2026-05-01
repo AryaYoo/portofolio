@@ -1114,7 +1114,7 @@ body.light-theme .exp-modal-desc {
 /* ─── Mini Map Navigation (Desktop) ─────────────────────── */
 .mini-map {
     position: fixed;
-    right: 2rem;
+    right: 60px;
     top: 50%;
     transform: translateY(-50%);
     display: flex;
