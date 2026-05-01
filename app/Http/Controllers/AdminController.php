@@ -59,6 +59,14 @@ class AdminController extends Controller
             $validated['photo'] = $request->file('photo')->store('profile', 'public');
         }
 
+        if ($request->hasFile('favicon')) {
+            $request->validate(['favicon' => 'image|mimes:ico,png,svg,jpg,jpeg,webp|max:1024']);
+            if ($profile->favicon) {
+                Storage::disk('public')->delete($profile->favicon);
+            }
+            $validated['favicon'] = $request->file('favicon')->store('profile', 'public');
+        }
+
         for ($i = 1; $i <= 4; $i++) {
             $fieldName = "wallpaper_$i";
             if ($request->hasFile($fieldName)) {

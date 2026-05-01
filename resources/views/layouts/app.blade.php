@@ -11,8 +11,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    
+    @php $globalProfile = \App\Models\Profile::first(); @endphp
+    @if($globalProfile && $globalProfile->favicon)
+        <link rel="icon" href="{{ asset('storage/' . $globalProfile->favicon) }}">
+    @endif
 </head>
 <body class="bg-[#08080f] text-white antialiased has-custom-cursor">
+    {{-- Theme Toggle (Square Slide) --}}
+    <div class="theme-switch-container">
+        <label class="theme-switch" for="checkbox">
+            <input type="checkbox" id="checkbox" />
+            <div class="slider square">
+                <div class="knob">
+                    <i class="fas fa-moon moon-icon"></i>
+                    <i class="fas fa-sun sun-icon"></i>
+                </div>
+            </div>
+        </label>
+    </div>
+
     @yield('content')
 
     {{-- Custom Cursor Elements --}}
@@ -21,6 +39,27 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // ─── Theme Toggle Logic ─────────────────────────────
+            const checkbox = document.getElementById('checkbox');
+            
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-theme');
+                checkbox.checked = true;
+            }
+
+            checkbox.addEventListener('change', (e) => {
+                if(e.target.checked) {
+                    document.body.classList.add('light-theme');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.body.classList.remove('light-theme');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+
+            // ─── Custom Cursor Logic ────────────────────────────
             const cursorDot = document.querySelector("[data-cursor-dot]");
             const cursorOutline = document.querySelector("[data-cursor-outline]");
 
@@ -38,14 +77,24 @@
                 cursorDot.style.top = `${mouseY}px`;
             });
 
+            window.addEventListener("mousedown", function() {
+                cursorOutline.classList.add("click-active");
+                cursorDot.style.transform = "translate(-50%, -50%) scale(0.5)";
+            });
+
+            window.addEventListener("mouseup", function() {
+                cursorOutline.classList.remove("click-active");
+                cursorDot.style.transform = "translate(-50%, -50%) scale(1)";
+            });
+
             // Smooth animation loop for the outline
             function animateCursor() {
                 // Lerp formula for smooth following
                 let distX = mouseX - outlineX;
                 let distY = mouseY - outlineY;
                 
-                outlineX = outlineX + (distX * 0.15);
-                outlineY = outlineY + (distY * 0.15);
+                outlineX = outlineX + (distX * 0.2); // Sightly faster follow
+                outlineY = outlineY + (distY * 0.2);
                 
                 cursorOutline.style.left = `${outlineX}px`;
                 cursorOutline.style.top = `${outlineY}px`;
@@ -56,22 +105,20 @@
             // Start the animation loop
             animateCursor();
 
-            // Add hover effect for interactive elements
-            const interactables = document.querySelectorAll('a, button, [onclick], input, textarea, select');
-            
-            interactables.forEach(el => {
-                el.addEventListener('mouseenter', () => {
-                    cursorOutline.classList.add('hover-active');
+            // Better hover detection
+            const updateInteractables = () => {
+                const interactables = document.querySelectorAll('a, button, [onclick], input, textarea, select, .minimap-dot, .map-dot');
+                interactables.forEach(el => {
+                    el.addEventListener('mouseenter', () => cursorOutline.classList.add('hover-active'));
+                    el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hover-active'));
                 });
-                
-                el.addEventListener('mouseleave', () => {
-                    cursorOutline.classList.remove('hover-active');
-                });
-            });
+            };
             
-            // Re-bind hover effect when new elements might be added (e.g. modals opening)
-            // A simple MutationObserver could be used here if needed, but for now we bind once.
-            // A click listener on the body as a fallback to re-check might be useful too.
+            updateInteractables();
+            
+            // Re-run detection when DOM changes (modals, etc)
+            const observer = new MutationObserver(updateInteractables);
+            observer.observe(document.body, { childList: true, subtree: true });
         });
     </script>
 </body>

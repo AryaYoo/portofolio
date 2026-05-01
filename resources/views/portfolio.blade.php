@@ -1,6 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+    :root { --project-theme: {{ $profile->theme_color ?? '#a855f7' }}; }
+</style>
 <div class="page-wrapper">
     {{-- Dynamic Background Layers --}}
     <div class="wallpapers-container">
@@ -95,12 +98,16 @@
         {{-- Floating Mobile Swipe Hint --}}
         <div class="mobile-swipe-hint" id="mobile-swipe-hint">
             <div class="swipe-hand">
-                <i class="fas fa-hand-pointer"></i>
+                <i class="fas fa-chevron-right"></i>
             </div>
             <span>Swipe Profile</span>
         </div>
 
-        {{-- Mobile Horizontal Dots (Minimap) --}}
+        {{-- Mini Map --}}
+        <div class="mini-map">
+        </div>
+
+        {{-- Mobile Horizontal Dots (Top) --}}
         <div class="mobile-dots-nav" id="mobile-dots">
             <div class="dot active"></div>
             <div class="dot"></div>
@@ -281,14 +288,14 @@
                     <div class="exp-modal-logo" id="modal-logo-wrap"></div>
                     <div>
                         <h3 id="modal-title" class="text-xl font-bold text-gray-900"></h3>
-                        <p id="modal-company" class="text-accent font-bold uppercase tracking-widest text-xs mt-1"></p>
+                        <p id="modal-company" class="text-purple-600 font-bold uppercase tracking-widest text-xs mt-1"></p>
                     </div>
                 </div>
                 <div class="exp-modal-meta">
                     <div class="meta-item"><i class="fas fa-calendar-alt"></i> <span id="modal-period"></span></div>
                     <div class="meta-item"><i class="fas fa-map-marker-alt"></i> <span id="modal-location"></span></div>
                 </div>
-                <div class="exp-modal-desc" id="modal-desc"></div>
+                <div class="exp-modal-desc text-gray-600" id="modal-desc" style="white-space: pre-line;"></div>
             </div>
         </div>
     </div>
@@ -310,42 +317,83 @@
     </div>
 
     <script>
-        // ─── Mobile Slider Dots & Hint ────────────────────────
+        // ─── Slider Dots & Minimap ────────────────────────
         const portalScroll = document.getElementById('portal-scroll');
-        const dotsNav = document.getElementById('mobile-dots');
-        const dots = document.querySelectorAll('#mobile-dots .dot');
+        const mobileDots = document.querySelectorAll('#mobile-dots .dot');
+        const desktopDots = document.querySelectorAll('.mini-map .map-dot');
         const swipeHint = document.getElementById('mobile-swipe-hint');
-        let hasSwiped = false;
+        const scrollHint = document.getElementById('scroll-hint');
 
-        if (portalScroll && dots.length > 0) {
-            // 1. Update dots on scroll
-            portalScroll.addEventListener('scroll', () => {
-                const scrollLeft = portalScroll.scrollLeft;
-                const width = portalScroll.offsetWidth; // Use offsetWidth for better accuracy
-                const activeIdx = Math.round(scrollLeft / width);
+        if (portalScroll) {
+            const handleScroll = () => {
+                const isMobile = window.innerWidth <= 1024;
+                const verticalScroll = window.scrollY;
+                const horizontalScroll = isMobile ? portalScroll.scrollLeft : portalScroll.scrollTop;
+                const width = portalScroll.offsetWidth || window.innerWidth;
+                const height = portalScroll.offsetHeight || window.innerHeight;
+                
+                // Calculate active index
+                const activeIdx = isMobile ? Math.round(horizontalScroll / width) : Math.round(horizontalScroll / height);
 
-                dots.forEach((dot, idx) => {
-                    dot.classList.toggle('active', idx === activeIdx);
+                // ─── Dynamic Drift ───
+                const driftX = Math.sin(verticalScroll * 0.001 + horizontalScroll * 0.002) * 45;
+                const driftY = Math.cos(verticalScroll * 0.0008 + horizontalScroll * 0.0005) * 35;
+
+                document.querySelectorAll('.wallpaper-layer').forEach((layer, idx) => {
+                    layer.classList.toggle('active', idx === activeIdx);
+                    const depth = 0.5 + (idx * 0.15);
+                    layer.style.transform = `scale(1.15) translate(${driftX * depth}px, ${driftY * depth}px)`;
                 });
 
-                // 2. Permanently hide Hint after first swipe
-                if (!hasSwiped && scrollLeft > 20) {
-                    hasSwiped = true;
-                    if (swipeHint) {
-                        swipeHint.style.opacity = '0';
-                        setTimeout(() => swipeHint.remove(), 500);
+                // Update All Dots (Mobile & Desktop)
+                mobileDots.forEach((dot, idx) => dot.classList.toggle('active', idx === activeIdx));
+                desktopDots.forEach((dot, idx) => dot.classList.toggle('active', idx === activeIdx));
+
+                if (isMobile) {
+                    // Toggle Hints Dynamically
+                    const isAtTop = window.scrollY < 50;
+                    if (activeIdx < 2) {
+                        if (swipeHint) {
+                            swipeHint.style.opacity = isAtTop ? '1' : '0';
+                            swipeHint.style.pointerEvents = isAtTop ? 'auto' : 'none';
+                        }
+                        if (scrollHint) {
+                            scrollHint.style.opacity = '0';
+                            scrollHint.style.pointerEvents = 'none';
+                        }
+                    } else {
+                        if (swipeHint) {
+                            swipeHint.style.opacity = '0';
+                            swipeHint.style.pointerEvents = 'none';
+                        }
+                        if (scrollHint) {
+                            scrollHint.style.opacity = isAtTop ? '0.4' : '0';
+                            scrollHint.style.pointerEvents = isAtTop ? 'auto' : 'none';
+                        }
+                    }
+                } else {
+                    if (scrollHint) {
+                        scrollHint.style.opacity = portalScroll.scrollTop > 50 ? '0' : '0.3';
                     }
                 }
-            }, { passive: true });
+            };
 
-            // 3. Make dots clickable
-            dots.forEach((dot, idx) => {
+            portalScroll.addEventListener('scroll', handleScroll, { passive: true });
+            window.addEventListener('scroll', handleScroll, { passive: true });
+            handleScroll();
+
+            // Make All Dots Clickable
+            [...mobileDots, ...desktopDots].forEach((dot, idx) => {
                 dot.addEventListener('click', () => {
-                    const width = portalScroll.offsetWidth;
-                    portalScroll.scrollTo({
-                        left: idx * width,
-                        behavior: 'smooth'
-                    });
+                    const realIdx = idx % 4; // Since we have 4 sections
+                    const isMobile = window.innerWidth <= 1024;
+                    if (isMobile) {
+                        const width = portalScroll.offsetWidth || window.innerWidth;
+                        portalScroll.scrollTo({ left: realIdx * width, behavior: 'smooth' });
+                    } else {
+                        const height = portalScroll.offsetHeight || window.innerHeight;
+                        portalScroll.scrollTo({ top: realIdx * height, behavior: 'smooth' });
+                    }
                 });
             });
         }
@@ -353,9 +401,9 @@
         // ─── Experience Modal ────────────────────────────────
         function openExpModal(exp) {
             const modal = document.getElementById('exp-modal');
-            document.getElementById('modal-title').innerText = exp.title;
-            document.getElementById('modal-company').innerText = exp.company;
-            document.getElementById('modal-period').innerText = exp.period;
+            document.getElementById('modal-title').innerText = exp.title || 'Unknown Position';
+            document.getElementById('modal-company').innerText = exp.company || 'Unknown Company';
+            document.getElementById('modal-period').innerText = exp.period || 'Unknown Period';
             document.getElementById('modal-location').innerText = exp.location || 'Remote';
             document.getElementById('modal-desc').innerText = exp.description || 'No additional details available.';
             
@@ -412,19 +460,7 @@
             document.body.style.overflow = '';
         }
 
-        // ─── Scroll Hint ─────────────────────────────────────
-        const scrollHint = document.getElementById('scroll-hint');
-        if (portalScroll && scrollHint) {
-            portalScroll.addEventListener('scroll', () => {
-                if (portalScroll.scrollTop > 50) {
-                    scrollHint.style.opacity = '0';
-                    scrollHint.style.pointerEvents = 'none';
-                } else {
-                    scrollHint.style.opacity = '0.3';
-                    scrollHint.style.pointerEvents = 'auto';
-                }
-            });
-        }
+
     </script>
 </div>
 @endsection

@@ -3,7 +3,10 @@
 @section('title', $project->title . ' - Project Overview')
 
 @section('content')
-<div class="page-wrapper" style="--project-theme: {{ $project->theme_color ?? '#4a5d23' }}">
+<style>
+    :root { --project-theme: {{ $project->theme_color ?? '#4a5d23' }}; }
+</style>
+<div class="page-wrapper">
     {{-- Background Image & Gradient Overlay --}}
     <div class="absolute inset-0 z-0 pointer-events-none bg-[#08080f]">
         @if($project->screenshot)
@@ -64,7 +67,7 @@
     {{-- ═══════════════════════════════════════════════════════════
          RIGHT PANEL — Modular Content (Scrollable)
          ═══════════════════════════════════════════════════════════ --}}
-    <section class="profile-portal bg-white text-gray-900">
+    <section class="profile-portal">
         {{-- Scroll Indicator (Right Side) --}}
         <div class="scroll-indicator" id="scroll-hint">
             <div class="mouse">
@@ -182,7 +185,6 @@
     display: flex;
     height: 100vh;
     overflow: hidden;
-    background: #fff;
 }
 .projects-hub {
     flex: 0 0 450px;
@@ -197,7 +199,6 @@
     height: 100vh;
     overflow: hidden;
     position: relative;
-    background: white;
     /* Iconic Split Notch */
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 70%, 50px 65%, 50px 35%, 0 30%);
 }
@@ -264,7 +265,7 @@
 /* ─── Overview Minimap ────────────────────────────────── */
 .overview-minimap {
     position: fixed;
-    right: 1.5rem;
+    right: 2rem;
     top: 50%;
     transform: translateY(-50%);
     display: flex;

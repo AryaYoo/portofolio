@@ -33,6 +33,25 @@
             </div>
 
             <div class="admin-card p-8">
+                <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6">Website Favicon</h4>
+                <div class="w-16 h-16 bg-white/5 border border-white/10 relative group mb-6 overflow-hidden mx-auto">
+                    @if($profile && $profile->favicon)
+                        <img src="{{ asset('storage/' . $profile->favicon) }}" id="favicon-preview" alt="Favicon" class="w-full h-full object-contain p-2">
+                    @else
+                        <div id="favicon-preview-placeholder" class="w-full h-full flex items-center justify-center">
+                            <i class="fas fa-globe text-2xl text-gray-800"></i>
+                        </div>
+                        <img id="favicon-preview" src="" alt="Favicon" class="w-full h-full object-contain p-2 hidden">
+                    @endif
+                </div>
+                <input type="file" name="favicon" accept=".ico,.png,.svg,.jpg,.jpeg,.webp" id="favicon-input" class="hidden" onchange="previewImage(this, 'favicon-preview', 'favicon-preview-placeholder')">
+                <label for="favicon-input" class="admin-btn-primary w-full inline-flex items-center justify-center gap-2 px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-white cursor-pointer transition-all">
+                    <i class="fas fa-upload"></i>
+                    <span>Select Favicon</span>
+                </label>
+            </div>
+
+            <div class="admin-card p-8">
                 <h4 class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-10">Dynamic Section Wallpapers</h4>
                 
                 <div class="space-y-10">

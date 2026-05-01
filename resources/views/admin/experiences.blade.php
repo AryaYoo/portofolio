@@ -93,6 +93,9 @@
                     </div>
 
                     <div class="flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all ml-6">
+                        <button type="button" onclick='openExpEditModal(@json($exp))' class="w-12 h-12 bg-white/5 flex items-center justify-center text-gray-500 hover:text-white hover:bg-purple-600 transition-all">
+                            <i class="fas fa-edit text-[10px]"></i>
+                        </button>
                         <form action="{{ route('admin.experiences.delete', $exp) }}" method="POST" onsubmit="return confirm('Erase this transmission record?')">
                             @csrf @method('DELETE')
                             <button type="submit" class="w-12 h-12 bg-white/5 flex items-center justify-center text-gray-500 hover:text-white hover:bg-red-600 transition-all">
@@ -110,4 +113,83 @@
         @endforelse
     </div>
 </div>
+
+{{-- Edit Experience Modal --}}
+<div id="editExpModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center">
+    <div class="admin-card p-10 w-full max-w-2xl relative max-h-[90vh] overflow-y-auto">
+        <button type="button" onclick="closeExpEditModal()" class="absolute top-6 right-6 text-gray-500 hover:text-white">
+            <i class="fas fa-times text-xl"></i>
+        </button>
+        <h3 class="text-xs font-black text-gray-300 uppercase tracking-widest mb-8">Edit Experience</h3>
+        <form id="editExpForm" method="POST" enctype="multipart/form-data" class="space-y-8">
+            @csrf @method('PUT')
+            <div>
+                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Position Title</label>
+                <input type="text" name="title" id="edit_exp_title" required
+                       class="admin-input w-full px-6 py-4 text-sm text-white placeholder-gray-800">
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Organization</label>
+                <input type="text" name="company" id="edit_exp_company" required
+                       class="admin-input w-full px-6 py-4 text-sm text-white placeholder-gray-800">
+            </div>
+            
+            <div>
+                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Organization Logo (Leave blank to keep current)</label>
+                <div class="relative">
+                    <input type="file" name="logo" accept="image/*" id="edit-logo-input" class="hidden">
+                    <label for="edit-logo-input" class="inline-flex w-full items-center justify-center gap-3 bg-white/5 border border-white/10 hover:border-purple-500/50 px-6 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-white cursor-pointer transition-all">
+                        <i class="fas fa-camera"></i>
+                        <span>Select New Logo</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Location</label>
+                    <input type="text" name="location" id="edit_exp_location"
+                           class="admin-input w-full px-5 py-4 text-sm text-white placeholder-gray-800">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Priority</label>
+                    <input type="number" name="sort_order" id="edit_exp_sort_order"
+                           class="admin-input w-full px-5 py-4 text-sm text-white placeholder-gray-800">
+                </div>
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Time Period</label>
+                <input type="text" name="period" id="edit_exp_period" required
+                       class="admin-input w-full px-6 py-4 text-sm text-white placeholder-gray-800">
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-3">Key Responsibilities</label>
+                <textarea name="description" id="edit_exp_description" rows="5"
+                          class="admin-input w-full px-6 py-4 text-sm text-white placeholder-gray-800 resize-none leading-relaxed"></textarea>
+            </div>
+            <button type="submit" class="admin-btn-primary w-full py-5 text-[10px] font-black uppercase tracking-[0.2em] text-white">
+                Update Record
+            </button>
+        </form>
+    </div>
+</div>
+
+@push('scripts')
+<script>
+function openExpEditModal(exp) {
+    document.getElementById('editExpModal').classList.remove('hidden');
+    document.getElementById('editExpForm').action = `/admin/experiences/${exp.id}`;
+    document.getElementById('edit_exp_title').value = exp.title || '';
+    document.getElementById('edit_exp_company').value = exp.company || '';
+    document.getElementById('edit_exp_location').value = exp.location || '';
+    document.getElementById('edit_exp_period').value = exp.period || '';
+    document.getElementById('edit_exp_description').value = exp.description || '';
+    document.getElementById('edit_exp_sort_order').value = exp.sort_order || 0;
+}
+
+function closeExpEditModal() {
+    document.getElementById('editExpModal').classList.add('hidden');
+}
+</script>
+@endpush
 @endsection

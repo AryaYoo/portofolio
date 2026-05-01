@@ -12,9 +12,8 @@ Route::get('/projects-all', [PortfolioController::class, 'allProjects'])->name('
 Route::post('/contact', [PortfolioController::class, 'sendContact'])->name('contact.send');
 
 // ─── Auth ──────────────────────────────────────────────────
-Route::get('/admin/login', [AuthController::class, 'loginForm'])->name('login'); // Laravel default auth redirect
-Route::get('/admin/login', [AuthController::class, 'loginForm'])->name('admin.login');
-Route::post('/admin/login', [AuthController::class, 'login']);
+Route::get('/admin/login', [AuthController::class, 'loginForm'])->name('login'); // For default Laravel redirects
+Route::post('/admin/login', [AuthController::class, 'login'])->name('admin.login'); // For form submission
 Route::post('/admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
 
 // ─── Admin (Protected) ────────────────────────────────────
