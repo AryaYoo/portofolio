@@ -445,8 +445,8 @@ body.light-theme .exp-modal-desc {
     flex: 0 0 340px;
     scroll-snap-align: start;
     background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 0;
     /* Back to sharp corners */
