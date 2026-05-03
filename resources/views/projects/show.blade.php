@@ -22,8 +22,8 @@
         <div class="relative z-10 flex flex-col h-full pl-0">
             {{-- Back Button --}}
             <div class="mb-10">
-                <a href="{{ route('portfolio') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 transition-all text-xs text-gray-300 hover:text-white border border-white/10 rounded-none">
-                    <i class="fas fa-chevron-left text-[10px]"></i>
+                <a href="{{ route('portfolio') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 transition-all text-[10px] font-bold text-gray-300 hover:text-white border border-white/10 rounded-none uppercase tracking-widest" style="font-family: 'Oswald', sans-serif;">
+                    <i class="fas fa-chevron-left text-[8px]"></i>
                     <span>Back</span>
                 </a>
             </div>
@@ -318,6 +318,17 @@
 }
 @media (max-width: 1024px) {
     .overview-minimap { display: none; }
+}
+
+/* ─── Font Consistency Overrides ─────────────────────── */
+.projects-hub h1, 
+.projects-hub h2, 
+.recommendation-section h3,
+.modular-header,
+.footer-area {
+    font-family: 'Oswald', sans-serif !important;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
 }
 </style>
 

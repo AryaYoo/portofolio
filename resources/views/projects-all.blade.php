@@ -114,7 +114,9 @@
         font-weight: 800;
         color: white;
         white-space: nowrap;
-        letter-spacing: 0.02em;
+        letter-spacing: 0.05em;
+        font-family: 'Oswald', sans-serif;
+        text-transform: uppercase;
     }
 
     .navbar-search {
