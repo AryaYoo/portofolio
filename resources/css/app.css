@@ -407,6 +407,8 @@ body.light-theme .exp-modal-desc {
 .section-title {
     font-size: 1.75rem;
     font-weight: 700;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
 }
 
 .section-subtitle {
@@ -487,10 +489,12 @@ body.light-theme .exp-modal-desc {
 
 .highlight-card-info h3 {
     color: white;
-    font-weight: 800;
+    font-weight: 700;
     font-size: 1.25rem;
     margin-bottom: 0.5rem;
     letter-spacing: -0.02em;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
 }
 
 .highlight-card-info p {
@@ -716,8 +720,10 @@ body.light-theme .exp-modal-desc {
 
 .portal-title {
     font-size: 2rem;
-    font-weight: 800;
+    font-weight: 700;
     margin-bottom: 1.5rem;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
 }
 
 /* 1. Profile */
@@ -905,6 +911,13 @@ body.light-theme .exp-modal-desc {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+}
+
+#modal-title,
+#cert-modal-title {
+    font-family: 'Oswald', sans-serif !important;
+    font-weight: 700 !important;
+    text-transform: uppercase;
 }
 
 .exp-modal-meta {
